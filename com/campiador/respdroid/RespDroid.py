@@ -6,7 +6,7 @@ import subprocess
 from com.campiador.respdroid.dynamic.ResultReporter import ResultReporter
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
-LOG_TIME = 60
+LOG_TIME = 5
 
 class RespDroid:
 
@@ -14,25 +14,24 @@ class RespDroid:
         self.APP_PACKAGE = "com.campiador.respdroid"
         self.TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
         self.devices =  self.getDeviceList()
+        for device in self.devices:
+            print(device)
         if len(self.devices) == 0:
             print("Error: no devices found!")
             exit(1)
 
-    def function1(self):
-        print("hello world")
-
     def runRespDroid(self):
         print ("in runRespDroid")
+
 
         for device in self.devices:
             # adbInstall in the future, I will install apps, path to which will be provided through args
             self.adbClearLogcat(device)
             self.adbStopApp(device, self.APP_PACKAGE)
             self.adbRunApp(device, self.APP_PACKAGE)
-
-        resultString = self.adbLogcat(self.TAG_RESPDROID_DYNAMIC)
-        resultList = DataPreparation().convertToImageList(resultString)
-        ResultReporter().createChart(resultList)
+            resultString = self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC)
+            resultList = DataPreparation().convertToImageList(resultString)
+            ResultReporter().createChart(resultList)
 
     def getDeviceList(self):
         device_list = []
@@ -84,12 +83,12 @@ class RespDroid:
             else:
                 print ("command {} had return value {}".format(adb_command_clear_logcat, return_value))
 
-
+    # TODO: should use gtimeout or timeout to correspond to MAC OS or Linux
     def adbLogcat(self, device, tag):
         print("in adb logcat")
         ADB_COMMAND_LOGCAT = "adb -s " + str(device) + " logcat -s " + tag
-        # ADB_COMMAND_LOGCAT = "adb -s " + str(device) + " logcat -s " + tag
-        (return_value, adb_command_logcat_output) = commands.getstatusoutput("timeout " + str(LOG_TIME) + "s " + ADB_COMMAND_LOGCAT)
+        (return_value, adb_command_logcat_output) = \
+            commands.getstatusoutput("timeout " + str(LOG_TIME) + "s " + ADB_COMMAND_LOGCAT)
         print("adb logcat command executed")
 
         if (return_value == 0):
@@ -100,32 +99,27 @@ class RespDroid:
 
         return adb_command_logcat_output
 
-    def adbLogcat(self, tag):
-        print("in adb logcat")
 
-        #ADB_COMMAND_LOGCAT = "adb logcat"
-        ADB_COMMAND_LOGCAT = "adb logcat -s " + tag
-        # (return_value, adb_command_logcat_output) = commands.getstatusoutput("timeout 15s " + ADB_COMMAND_LOGCAT + " &")
-        # (return_value, adb_command_logcat_output) = commands.getstatusoutput("nohup " + ADB_COMMAND_LOGCAT + " &")
-        # return_value = subprocess.Popen(("timeout 15s " + ADB_COMMAND_LOGCAT + " | lc1").split())
-        (return_value, adb_command_logcat_output) = commands.getstatusoutput("timeout " + str(LOG_TIME)+ "s " + ADB_COMMAND_LOGCAT)
-        print("adb logcat command executed")
-        print("return_value:" + str(return_value))
-
-        for line in adb_command_logcat_output.splitlines():
-            print line
-
-        if (return_value == 0):
-            for line in adb_command_logcat_output.splitlines():
-                print line
-        #     file = open("lc1", "r")
-        #     print file.read()
-            #for line in file.:
-             #  print line
-        else:
-            print ("command {} returned with value {}".format(ADB_COMMAND_LOGCAT, return_value))
-
-        return adb_command_logcat_output
+    # NOTE:Function polymorphism does not exist in python
+    # def adbLogcat(self, tag):
+    #     print("in adb logcat")
+    #
+    #     ADB_COMMAND_LOGCAT = "adb logcat -s " + tag
+    #     (return_value, adb_command_logcat_output) = \
+    #         commands.getstatusoutput("timeout " + str(LOG_TIME)+ "s " + ADB_COMMAND_LOGCAT)
+    #     print("adb logcat command executed")
+    #     print("return_value:" + str(return_value))
+    #
+    #     for line in adb_command_logcat_output.splitlines():
+    #         print line
+    #
+    #     if (return_value == 0):
+    #         for line in adb_command_logcat_output.splitlines():
+    #             print line
+    #     else:
+    #         print ("command {} returned with value {}".format(ADB_COMMAND_LOGCAT, return_value))
+    #
+    #     return adb_command_logcat_output
 
 
     #     TODO: process args, e.g. app path

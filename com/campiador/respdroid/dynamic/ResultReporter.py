@@ -32,4 +32,10 @@ class ResultReporter:
         plt.xticks(y_pos, x)
         plt.ylabel('Time in milliseconds')
         plt.title('Image File')
+        threshold_soft = 100.0
+        threshold_hard = 200.0
+
+        plt.plot([0., 4.5], [threshold_soft, threshold_soft], "k--")
+        plt.plot([0., 4.5], [threshold_hard, threshold_hard], "k--")
+
         plt.show()
