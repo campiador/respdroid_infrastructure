@@ -5,7 +5,7 @@ from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
 
 class ResultReporter:
-    def createChart(self, resList):
+    def createChart(self, resList, label):
 
         # print("create chart from output")
         # plt.plot([1, 2, 3, 4])
@@ -30,12 +30,16 @@ class ResultReporter:
 
         y = map(int, y)
 
-        plt.bar(y_pos, y, align='center', alpha=0.5)
+        plt.bar(y_pos, y, align='center', alpha=0.5, color='r')
         plt.xticks(y_pos, x)
         plt.ylabel('Time in milliseconds')
-        plt.title('Image File')
+        plt.xlabel('Image File')
+        plt.title('Responsiveness')
         threshold_soft = 100.0
         threshold_hard = 200.0
+
+        plt.legend([y], [label])
+        # plt.legend(handles=[plt])
 
         plt.plot([0., 4.5], [threshold_soft, threshold_soft], "k--")
         plt.plot([0., 4.5], [threshold_hard, threshold_hard], "k--")

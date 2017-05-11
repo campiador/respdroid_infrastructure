@@ -1,5 +1,5 @@
 class RespNode:
-    def __init__(self, device, time, operation, imgbase, imgperc):
+    def __init__(self, device, time, operation, imgbase, imgperc, imgsizeKB):
         self.device = device
         self.time = time
         self.operation = operation
@@ -7,6 +7,7 @@ class RespNode:
             imgbase = imgbase.replace(".jpg", "")
         self.img_base = imgbase
         self.img_perc = imgperc
+        self.img_sizeKB = imgsizeKB
 
     def getDevice(self):
         return self.device
@@ -22,3 +23,6 @@ class RespNode:
 
     def getScaleParam(self):
         return self.img_perc
+
+    def getImgSize(self):
+        return self.img_sizeKB

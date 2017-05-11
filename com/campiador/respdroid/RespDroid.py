@@ -7,6 +7,7 @@ from sys import platform
 import subprocess
 
 from com.campiador.respdroid.dynamic.ResultReporter import ResultReporter
+from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
 LOG_TIME = 5
@@ -29,14 +30,20 @@ class RespDroid:
         print ("in runRespDroid")
 
 
+        device_index = 0
+        resultStrings= []
+        resultLists = []
         for device in self.devices:
             # adbInstall in the future, I will install apps, path to which will be provided through args
             self.adbClearLogcat(device)
             self.adbStopApp(device, self.APP_PACKAGE)
             self.adbRunApp(device, self.APP_PACKAGE)
-            resultString = self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC)
-            resultList = DataPreparation().convertToImageList(resultString)
-            ResultReporter().createChart(resultList)
+            resultStrings[device_index] = self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC)
+            resultLists[device_index] = DataPreparation().convertToImageList(resultStrings[device_index])
+            device_index += 1
+
+
+        ResultReporter().createChart(resultList, DeviceInfo.getDeviceName(device))
 
     def getDeviceList(self):
         device_list = []
@@ -88,7 +95,6 @@ class RespDroid:
             else:
                 print ("command {} had return value {}".format(adb_command_clear_logcat, return_value))
 
-    # TODO: should use gtimeout or timeout to correspond to MAC OS or Linux
     def adbLogcat(self, device, tag):
         print("in adb logcat")
         ADB_COMMAND_LOGCAT = "adb -s " + str(device) + " logcat -s " + tag
@@ -108,7 +114,7 @@ class RespDroid:
         return adb_command_logcat_output
 
 
-    # NOTE:Function polymorphism does not exist in python
+    # NOTE:Function polymorphism does not exist in python, the last function will be used.
     # def adbLogcat(self, tag):
     #     print("in adb logcat")
     #

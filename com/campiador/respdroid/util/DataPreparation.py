@@ -14,7 +14,7 @@ class DataPreparation:
                 continue
             else:
 
-                respNode = RespNode(line_elems[6], line_elems[2], "decode image", line_elems[4], line_elems[5])
+                respNode = RespNode(line_elems[6], line_elems[2], "decode image", line_elems[4], line_elems[5], line_elems[6])
                 imgList.append(respNode)
 
         return imgList
