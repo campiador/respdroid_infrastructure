@@ -28,6 +28,8 @@ class ResultReporter:
 
         y_pos = np.arange(len(x))
 
+        y = map(int, y)
+
         plt.bar(y_pos, y, align='center', alpha=0.5)
         plt.xticks(y_pos, x)
         plt.ylabel('Time in milliseconds')

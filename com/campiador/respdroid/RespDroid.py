@@ -1,12 +1,17 @@
 import commands
 import argparse
 
+from sys import platform
+
+
 import subprocess
 
 from com.campiador.respdroid.dynamic.ResultReporter import ResultReporter
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
 LOG_TIME = 5
+
+
 
 class RespDroid:
 
@@ -87,8 +92,11 @@ class RespDroid:
     def adbLogcat(self, device, tag):
         print("in adb logcat")
         ADB_COMMAND_LOGCAT = "adb -s " + str(device) + " logcat -s " + tag
+
+        timeout_program_name = self.getOsSpecificTimeout();
+
         (return_value, adb_command_logcat_output) = \
-            commands.getstatusoutput("timeout " + str(LOG_TIME) + "s " + ADB_COMMAND_LOGCAT)
+            commands.getstatusoutput(timeout_program_name + " " + str(LOG_TIME) + "s " + ADB_COMMAND_LOGCAT)
         print("adb logcat command executed")
 
         if (return_value == 0):
@@ -133,6 +141,17 @@ class RespDroid:
 
         args = parser.parse_args()
         print args.accumulate(args.integers)
+
+    def getOsSpecificTimeout(self):
+        if platform == "linux" or platform == "linux2":
+            # linux
+            return "timeout"
+        elif platform == "darwin":
+        # OS X
+            return "gtimeout"
+        else: #platform == "win32":
+        # Windows...
+            return "timeout"
 
 
 
