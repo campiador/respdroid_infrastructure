@@ -1,25 +1,20 @@
-import commands
 import argparse
-
+import commands
 from sys import platform
 
-
-import subprocess
-
-from com.campiador.respdroid.dynamic.ResultReporter import ResultReporter
+from com.campiador.respdroid.graphics import ChartTest
+from com.campiador.respdroid.graphics.ChartDrawer import ChartDrawer
 from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
 LOG_TIME = 5
 
 
-
 class RespDroid:
-
     def __init__(self):
         self.APP_PACKAGE = "com.campiador.respdroid"
         self.TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
-        self.devices =  self.getDeviceList()
+        self.devices = self.getDeviceList()
         for device in self.devices:
             print(device)
         if len(self.devices) == 0:
@@ -29,21 +24,21 @@ class RespDroid:
     def runRespDroid(self):
         print ("in runRespDroid")
 
-
         device_index = 0
-        resultStrings= []
+        resultStrings = []
         resultLists = []
         for device in self.devices:
             # adbInstall in the future, I will install apps, path to which will be provided through args
             self.adbClearLogcat(device)
             self.adbStopApp(device, self.APP_PACKAGE)
             self.adbRunApp(device, self.APP_PACKAGE)
-            resultStrings[device_index] = self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC)
-            resultLists[device_index] = DataPreparation().convertToImageList(resultStrings[device_index])
+            resultStrings.append(self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC))
+            resultLists.append(DataPreparation().convertToImageList(resultStrings[device_index]))
             device_index += 1
 
+        print resultLists
 
-        ResultReporter().createChart(resultList, DeviceInfo.getDeviceName(device))
+        ChartTest.createChart(resultLists, "chart title", "x axis label", "y_axis_label")
 
     def getDeviceList(self):
         device_list = []
@@ -62,7 +57,7 @@ class RespDroid:
     # TODO: compile app using gradle wrapper from Android Studio
     def adbCompile(self, app_path):
         adb_command_compile = " /path/to/gradlewrapperinproject/ + gradlew assembleDebug"
-        #In a default project setup, the resulting apk can then be found in app/build/outputs/apk/app-debug.apk
+        # In a default project setup, the resulting apk can then be found in app/build/outputs/apk/app-debug.apk
 
     def adbInstall(self, device, app_path):
         ADB_COMMAND_INSTALL = "adb -s " + device + " install" + app_path
@@ -84,7 +79,6 @@ class RespDroid:
         else:
             print("command {} failed".format(adb_command_stop))
             exit(1)
-
 
     def adbClearLogcat(self, device):
         adb_command_clear_logcat = "adb -s " + str(device) + " logcat -c"
@@ -109,10 +103,9 @@ class RespDroid:
             for line in adb_command_logcat_output.splitlines():
                 print line
             else:
-                print ("command {} returned with value {}". format(ADB_COMMAND_LOGCAT, return_value))
+                print ("command {} returned with value {}".format(ADB_COMMAND_LOGCAT, return_value))
 
         return adb_command_logcat_output
-
 
     # NOTE:Function polymorphism does not exist in python, the last function will be used.
     # def adbLogcat(self, tag):
@@ -153,14 +146,11 @@ class RespDroid:
             # linux
             return "timeout"
         elif platform == "darwin":
-        # OS X
+            # OS X
             return "gtimeout"
-        else: #platform == "win32":
-        # Windows...
+        else:  # platform == "win32":
+            # Windows...
             return "timeout"
 
 
-
 RespDroid().runRespDroid()
-
-

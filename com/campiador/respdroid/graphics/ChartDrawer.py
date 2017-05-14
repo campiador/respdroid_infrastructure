@@ -4,7 +4,7 @@ import numpy as np
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
 
-class ResultReporter:
+class ChartDrawer:
     def createChart(self, resList, label):
 
         # print("create chart from output")
