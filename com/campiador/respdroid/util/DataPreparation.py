@@ -22,7 +22,7 @@ class DataPreparation:
     def imgListTitles(self, imgList):
         titles = []
         for node in imgList:
-            titles.append(node.getBaseParam())
+            titles.append(node.getImageName())
         return titles
 
     def imgListValues(self, imgList):

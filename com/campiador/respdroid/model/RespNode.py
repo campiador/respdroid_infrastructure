@@ -26,3 +26,16 @@ class RespNode:
 
     def getImgSize(self):
         return self.img_sizeKB
+
+    def getImageName(self):
+        return "{}".format(self.getBaseParam())
+
+    #TODO: handle image resolution
+    def getImageResolution(self):
+        return "not yet"
+    #
+    # def __repr__(self):
+    #     print("{}{}".format(self.getBaseParam(), self.getImgSize()))
+
+    # def __str__(self):
+    #     print(self.getBaseParam() + "{}".format(self.getImgSize()))

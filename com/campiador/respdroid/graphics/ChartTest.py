@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
 
-
+from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
 
 def createChart(resLists, chart_title, x_label, y_label):
@@ -17,29 +17,48 @@ def createChart(resLists, chart_title, x_label, y_label):
             "Error: trying to draw empty list"
             exit(1)
 
+    x = ["1", "2", "3", "4"]
+
+    for resList in resLists:
+        x_temp = DataPreparation().imgListTitles(resList)
+        for index, value in enumerate(x):
+            print index,"-",value
+            if  (x[index] == value):
+                # CONTINUE
+            else:
+                print "big problem
+                exit(1)
 
 
-    x= ["1", "2", "3", "4"]
+        y = DataPreparation().imgListValues(resList)
+        for index, j in enumerate(y):
+            print index, "-", j
+
+
+
+
 
     y = [50, 150, 250, 300]
-    values_2 = [25, 125, 225, 275]
-    values_3 = [1, 111, 11, 12]
+    values_2 = [60, 165, 275, 310]
+    values_3 = [80, 175, 290, 320]
 
 
     # ax = plt.subplot(111)
     # ax.bar(x, y, color='g', align='center')
     # ax.autoscale(tight=True)
 
-    width = .3
+    width = 1 / float(len(x) + 1)
 
     x_pos = np.arange(len(x))
 
 
     y = map(int, y)
 
-    plt.bar(x_pos - width/2, y, width, alpha=0.5, color='r')
-    plt.bar(x_pos + width/2, values_2, width, alpha=0.5, color='b')
-    # plt.bar(x_pos + 2*width, values_3, width, alpha=0.5, color='g')
+    plt.bar(x_pos + width * float(0), y, width, alpha=0.5, color='r')
+    plt.bar(x_pos + width * float(1), values_2, width, alpha=0.5, color='b')
+    plt.bar(x_pos + width * float(2), values_3, width, alpha=0.5, color='g')
+    plt.bar(x_pos + width * float(3), values_3, width, alpha=0.5, color='y')
+
     plt.xticks(x_pos, x)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
