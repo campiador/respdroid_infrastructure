@@ -38,11 +38,11 @@ class RespDroid:
 
 
 
-        for resultList in resultLists:
-            print "printing resultlists. its length is {}".format(len(resultLists))
-            print "printing resultlist. its length is {}".format(len(resultList))
-            for result in resultList:
-                print "printing result. {}".format(result)
+        # for resultList in resultLists:
+        #     print "printing resultlists. its length is {}".format(len(resultLists))
+        #     print "printing resultlist. its length is {}".format(len(resultList))
+        #     for result in resultList:
+        #         print "printing result. {}".format(result)
 
 
         ChartTest.createChart(resultLists, "chart title", "x axis label", "y_axis_label")

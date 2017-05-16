@@ -4,6 +4,17 @@ import matplotlib.patches as mpatches
 
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
+import matplotlib.cm as cmx
+import matplotlib.colors as colors
+
+def get_cmap(N):
+    '''Returns a function that maps each index in 0, 1, ... N-1 to a distinct 
+    RGB color.'''
+    color_norm  = colors.Normalize(vmin=0, vmax=N-1)
+    scalar_map = cmx.ScalarMappable(norm=color_norm, cmap='hsv')
+    def map_index_to_rgb_color(index):
+        return scalar_map.to_rgba(index)
+    return map_index_to_rgb_color
 
 def createChart(resLists, chart_title, x_label, y_label):
 
@@ -17,47 +28,33 @@ def createChart(resLists, chart_title, x_label, y_label):
             "Error: trying to draw empty list"
             exit(1)
 
-    x = ["1", "2", "3", "4"]
+    N_devices = len(resLists)
+    cmap = get_cmap(N_devices)
+    for i in range(N_devices):
+        print cmap(i)
 
-    for resList in resLists:
+    #TODO: check to make sure all x value lists are identical
+    for i, resList in enumerate(resLists):
         x_temp = DataPreparation().imgListTitles(resList)
-        for index, value in enumerate(x):
-            print index,"-",value
-            if  (x[index] == value):
-                # CONTINUE
-            else:
-                print "big problem
-                exit(1)
+        y_temp = DataPreparation().imgListValues(resList)
 
+        N_datapoints = len(x_temp)
 
-        y = DataPreparation().imgListValues(resList)
-        for index, j in enumerate(y):
-            print index, "-", j
+        width = 1 / float(N_datapoints + 1)
 
+        col = cmap(i)
+        x_pos = np.arange(N_datapoints)
 
+        y = map(int, y_temp)
 
-
-
-    y = [50, 150, 250, 300]
-    values_2 = [60, 165, 275, 310]
-    values_3 = [80, 175, 290, 320]
-
+        plt.bar(x_pos + width * float(i), y_temp, width, alpha=0.5, color=col)
 
     # ax = plt.subplot(111)
     # ax.bar(x, y, color='g', align='center')
     # ax.autoscale(tight=True)
 
-    width = 1 / float(len(x) + 1)
-
-    x_pos = np.arange(len(x))
 
 
-    y = map(int, y)
-
-    plt.bar(x_pos + width * float(0), y, width, alpha=0.5, color='r')
-    plt.bar(x_pos + width * float(1), values_2, width, alpha=0.5, color='b')
-    plt.bar(x_pos + width * float(2), values_3, width, alpha=0.5, color='g')
-    plt.bar(x_pos + width * float(3), values_3, width, alpha=0.5, color='y')
 
     plt.xticks(x_pos, x)
     plt.xlabel(x_label)
