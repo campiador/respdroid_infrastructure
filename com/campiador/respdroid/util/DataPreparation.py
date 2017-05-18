@@ -14,7 +14,8 @@ class DataPreparation:
                 continue
             else:
 
-                respNode = RespNode(line_elems[6], line_elems[2], "decode image", line_elems[4], line_elems[5], line_elems[6])
+                respNode = RespNode(line_elems[6], line_elems[2], "decode image", line_elems[4], line_elems[5],
+                                    line_elems[7])
                 imgList.append(respNode)
 
         return imgList
@@ -24,6 +25,13 @@ class DataPreparation:
         for node in imgList:
             titles.append(node.getImageName())
         return titles
+
+    def imgListTitlesAndSizes(self, imgList):
+        titles = []
+        for node in imgList:
+            titles.append("{} ({})".format(node.getImageName(), node.getImgSize()))
+        return titles
+
 
     def imgListValues(self, imgList):
         values = []

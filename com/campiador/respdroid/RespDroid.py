@@ -7,7 +7,8 @@ from com.campiador.respdroid.graphics.ChartDrawer import ChartDrawer
 from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
 
-LOG_TIME = 5
+LOG_TIME = 10
+NUMBER_OF_REPETITIONS = 10
 
 
 class RespDroid:
@@ -21,7 +22,7 @@ class RespDroid:
             print("Error: no devices found!")
             exit(1)
 
-    def runRespDroid(self):
+    def runRespDroid(self, repetition_max):
         print ("in runRespDroid")
 
         device_index = 0
@@ -45,7 +46,7 @@ class RespDroid:
         #         print "printing result. {}".format(result)
 
 
-        ChartTest.createChart(resultLists, "chart title", "x axis label", "y_axis_label")
+        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
     def getDeviceList(self):
         device_list = []
@@ -160,4 +161,4 @@ class RespDroid:
             return "timeout"
 
 
-RespDroid().runRespDroid()
+RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)
