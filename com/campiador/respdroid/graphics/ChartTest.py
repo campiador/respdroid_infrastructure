@@ -16,12 +16,9 @@ import matplotlib.colors as colors
 #         return scalar_map.to_rgba(index)
 #     return map_index_to_rgb_color
 
-
 colors = ['r', 'b', 'g', 'y']
 
-
 def get_a_color(i):
-
     max = len(colors)
     if i >= max:
         print("We only have {} colors. {} is too many.\n Please extend get_a_color func".format(max, i))
@@ -30,24 +27,13 @@ def get_a_color(i):
 
 
 def createChart(resLists, chart_title, x_label, y_label):
-
-    # print("create chart from output")
-    # plt.plot([1, 2, 3, 4])
-    # plt.ylabel('some numbers')
-    # plt.show()
-
     for list in resLists:
         if not list:
             "Error: trying to draw empty list"
             exit(1)
-
-    # N_devices = len(resLists)
-    # cmap = get_cmap(N_devices)
-    # for i in range(N_devices):
-    #     print cmap(i)
     legend_patches = []
 
-    #TODO: check to make sure all x value lists are identical
+    # TODO: check to make sure all x value lists are identical
     for i, resList in enumerate(resLists):
         x_temp = DataPreparation().imgListTitlesAndSizes(resList)
         y_temp = DataPreparation().imgListValues(resList)
@@ -68,10 +54,6 @@ def createChart(resLists, chart_title, x_label, y_label):
 
         patch = mpatches.Patch(color=col, label=device_type)
         legend_patches.append(patch)
-
-    # ax = plt.subplot(111)
-    # ax.bar(x, y, color='g', align='center')
-    # ax.autoscale(tight=True)
 
     plt.xticks(x_pos, x_temp)
     plt.xlabel(x_label)

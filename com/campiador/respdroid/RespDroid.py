@@ -6,6 +6,7 @@ from com.campiador.respdroid.graphics import ChartTest
 from com.campiador.respdroid.graphics.ChartDrawer import ChartDrawer
 from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.DataPreparation import DataPreparation
+from com.campiador.respdroid.model.RespNode import RespNode
 
 LOG_TIME = 10
 NUMBER_OF_REPETITIONS = 10
@@ -16,37 +17,54 @@ class RespDroid:
         self.APP_PACKAGE = "com.campiador.respdroid"
         self.TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
         self.devices = self.getDeviceList()
+
+    def check_device_connections(self):
         for device in self.devices:
             print(device)
         if len(self.devices) == 0:
             print("Error: no devices found!")
             exit(1)
 
+    def run_respdroid_dummy_data(self, repeat_count):
+        print("running respodroid with dummy data")
+        resultLists = [
+            [
+                RespNode("Nexus 4", 60, "decode-image", "sample_img_0", 1, 900),
+                RespNode("Nexus 4", 120, "decode-image", "sample_img_1", 1, 1000),
+                RespNode("Nexus 4", 220, "decode-image", "sample_img_2", 1, 1100),
+                RespNode("Nexus 4", 320, "decode-image", "sample_img_3", 1, 1200),
+                RespNode("Nexus 4", 420, "decode-image", "sample_img_4", 1, 1300),
+            ]
+            ,
+            [
+                RespNode("Nexus 6", 40, "decode-image", "sample_img_0", 1, 900),
+                RespNode("Nexus 6", 80, "decode-image", "sample_img_1", 1, 1000),
+                RespNode("Nexus 6", 180, "decode-image", "sample_img_2", 1, 1100),
+                RespNode("Nexus 6", 280, "decode-image", "sample_img_3", 1, 1200),
+                RespNode("Nexus 6", 380, "decode-image", "sample_img_4", 1, 1300)
+            ]
+        ]
+        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+
+
     def runRespDroid(self, repetition_max):
         print ("in runRespDroid")
+        self.check_device_connections()
 
-        device_index = 0
-        resultStrings = []
-        resultLists = []
+        resultLists = [] #this list will be filled by logcat
+        resultLists = self.logcat_to_respnode_list(resultLists)
+
+        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+
+    def logcat_to_respnode_list(self, resultLists):
         for device in self.devices:
             # adbInstall in the future, I will install apps, path to which will be provided through args
             self.adbClearLogcat(device)
             self.adbStopApp(device, self.APP_PACKAGE)
             self.adbRunApp(device, self.APP_PACKAGE)
-            resultStrings.append(self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC))
-            resultLists.append(DataPreparation().convertToImageList(resultStrings[device_index]))
-            device_index += 1
-
-
-
-        # for resultList in resultLists:
-        #     print "printing resultlists. its length is {}".format(len(resultLists))
-        #     print "printing resultlist. its length is {}".format(len(resultList))
-        #     for result in resultList:
-        #         print "printing result. {}".format(result)
-
-
-        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+            resultString = self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC)
+            resultLists.append(DataPreparation().convertStringToImageList(resultString))
+        return resultLists
 
     def getDeviceList(self):
         device_list = []
@@ -149,6 +167,7 @@ class RespDroid:
         args = parser.parse_args()
         print args.accumulate(args.integers)
 
+    #TODO: check to see if timeout is installed at all
     def getOsSpecificTimeout(self):
         if platform == "linux" or platform == "linux2":
             # linux
@@ -161,4 +180,5 @@ class RespDroid:
             return "timeout"
 
 
-RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)
+# RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)
+RespDroid().run_respdroid_dummy_data(NUMBER_OF_REPETITIONS)

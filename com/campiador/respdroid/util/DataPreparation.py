@@ -4,7 +4,7 @@ from com.campiador.respdroid.model.RespNode import RespNode
 
 
 class DataPreparation:
-    def convertToImageList(self, imgResultString):
+    def convertStringToImageList(self, imgResultString):
         imgList = []
         for line in imgResultString.splitlines():
             line_elems = line.split("--")
