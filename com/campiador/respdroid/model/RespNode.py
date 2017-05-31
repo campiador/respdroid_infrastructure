@@ -1,3 +1,5 @@
+# TODO: all nodes should inherit from an abstract base node, called UX node
+
 class RespNode:
     def __init__(self, device, time, operation, imgbase, imgperc, imgsizeKB):
         self.device = device

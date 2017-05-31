@@ -2,6 +2,7 @@ import argparse
 import commands
 from sys import platform
 
+from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.graphics import ChartTest
 from com.campiador.respdroid.graphics.ChartDrawer import ChartDrawer
 from com.campiador.respdroid.util import DeviceInfo
@@ -10,6 +11,9 @@ from com.campiador.respdroid.model.RespNode import RespNode
 
 LOG_TIME = 10
 NUMBER_OF_REPETITIONS = 10
+
+
+
 
 
 class RespDroid:
@@ -27,24 +31,14 @@ class RespDroid:
 
     def run_respdroid_dummy_data(self, repeat_count):
         print("running respodroid with dummy data")
-        resultLists = [
-            [
-                RespNode("Nexus 4", 60, "decode-image", "sample_img_0", 1, 900),
-                RespNode("Nexus 4", 120, "decode-image", "sample_img_1", 1, 1000),
-                RespNode("Nexus 4", 220, "decode-image", "sample_img_2", 1, 1100),
-                RespNode("Nexus 4", 320, "decode-image", "sample_img_3", 1, 1200),
-                RespNode("Nexus 4", 420, "decode-image", "sample_img_4", 1, 1300),
-            ]
-            ,
-            [
-                RespNode("Nexus 6", 40, "decode-image", "sample_img_0", 1, 900),
-                RespNode("Nexus 6", 80, "decode-image", "sample_img_1", 1, 1000),
-                RespNode("Nexus 6", 180, "decode-image", "sample_img_2", 1, 1100),
-                RespNode("Nexus 6", 280, "decode-image", "sample_img_3", 1, 1200),
-                RespNode("Nexus 6", 380, "decode-image", "sample_img_4", 1, 1300)
-            ]
-        ]
+        resultLists = self.get_dummy_data()
+
+        self.store_data(resultLists)
+
         ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+
+        DatabaseManager.read_database()
+
 
 
     def runRespDroid(self, repetition_max):
@@ -55,6 +49,8 @@ class RespDroid:
         resultLists = self.logcat_to_respnode_list(resultLists)
 
         ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+
+
 
     def logcat_to_respnode_list(self, resultLists):
         for device in self.devices:
@@ -79,6 +75,31 @@ class RespDroid:
             print("command {} failed".format(ADB_COMMAND_DEVICES))
             exit(1)
         return device_list
+
+
+    def store_data(self, resultLists):
+        for result_list in resultLists:
+            DatabaseManager.insert_objects(result_list)
+
+    def get_dummy_data(self):
+        resultLists = [
+            [
+                RespNode("Nexus 4", 60, "decode-image", "sample_img_0", 1, 900),
+                RespNode("Nexus 4", 120, "decode-image", "sample_img_1", 1, 1000),
+                RespNode("Nexus 4", 220, "decode-image", "sample_img_2", 1, 1100),
+                RespNode("Nexus 4", 320, "decode-image", "sample_img_3", 1, 1200),
+                RespNode("Nexus 4", 420, "decode-image", "sample_img_4", 1, 1300),
+            ]
+            ,
+            [
+                RespNode("Nexus 6", 40, "decode-image", "sample_img_0", 1, 900),
+                RespNode("Nexus 6", 80, "decode-image", "sample_img_1", 1, 1000),
+                RespNode("Nexus 6", 180, "decode-image", "sample_img_2", 1, 1100),
+                RespNode("Nexus 6", 280, "decode-image", "sample_img_3", 1, 1200),
+                RespNode("Nexus 6", 380, "decode-image", "sample_img_4", 1, 1300)
+            ]
+        ]
+        return resultLists
 
     # TODO: compile app using gradle wrapper from Android Studio
     def adbCompile(self, app_path):

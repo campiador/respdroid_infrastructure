@@ -38,3 +38,7 @@ class DataPreparation:
         for node in imgList:
             values.append(node.getTimeDuration())
         return values
+
+
+
+
