@@ -30,22 +30,21 @@ class RespDroid:
             exit(1)
 
     def run_respdroid_dummy_data(self, repeat_count):
-        print("running respodroid with dummy data")
+        print("running respdroid with dummy data")
         resultLists = self.get_dummy_data()
 
-        self.store_data(resultLists)
+        self.store_data(resultLists)  # continue here: database does not work
 
-        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        #ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
         DatabaseManager.read_database()
-
 
 
     def runRespDroid(self, repetition_max):
         print ("in runRespDroid")
         self.check_device_connections()
 
-        resultLists = [] #this list will be filled by logcat
+        resultLists = []  # this list will be filled by logcat
         resultLists = self.logcat_to_respnode_list(resultLists)
 
         ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")

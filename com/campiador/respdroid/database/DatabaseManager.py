@@ -6,11 +6,12 @@ from com.campiador.respdroid.model.RespNode import RespNode
 # SCHEMA: is_dummy? (1=true:0=false), date(time of transaction),
 # device, time (delay), operation, imgbase, imgperc, imgsizeKB
 # TODO: think of a primary key
+RESPDROID_DB = './database/respdroid.db'
 
 
 def create_database_if_not_exists():
     global c, conn
-    conn = sqlite3.connect('respdroid.db')
+    conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
     if table_exists(c):
@@ -46,16 +47,18 @@ def table_exists(c):
 
 def insert_query(data):
     global c, conn
-    conn = sqlite3.connect('respdroid.db')
+    conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
     c.executemany('INSERT INTO respnodes VALUES (?,?,?,?,?,?,?,?)', data)
+    conn.commit()
+    conn.close()
 
 
 def read_database():
     # this variable holds the true, we use the tuple to prevent sql injection attacks
     print "reading database:"
     global c, conn
-    conn = sqlite3.connect('respdroid.db')
+    conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
     t = (1,)
@@ -66,6 +69,9 @@ def read_database():
         print row
 
 def insert_objects(respnodes):
+    print "inserting objects:"
+    for respnode in respnodes:
+        print respnode.getImageName()
     query_data = convert_objects_to_query(respnodes)
     insert_query(query_data)
 
@@ -76,6 +82,8 @@ def convert_objects_to_query(respnodes):
         # TODO: timestamp and dummy flag should be handled in a higher level
         query_data.append((1, '2017-05-30', respnode.getDevice(), respnode.getTimeDuration(), respnode.getOperation(),
                            respnode.getBaseParam(), respnode.getScaleParam(), respnode.getImgSize()))
+    for query_element in query_data:
+        print "converted: {}".format(query_element)
     return query_data
 
 
