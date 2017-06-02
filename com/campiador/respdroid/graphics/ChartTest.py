@@ -1,3 +1,6 @@
+import datetime
+import time
+
 import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
@@ -69,8 +72,13 @@ def createChart(resLists, chart_title, x_label, y_label):
 
     plt.legend(handles=legend_patches)
 
+    # important: we want the code to flow after drawing a chart. show() blocks by default.
+    ts = time.time()
+    plt.show(block=False)
+    stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+    print stamp
 
-    plt.show()
+    #plt.savefig('./{}'.format(date.ctime()))
 
 
 # createChart([], "chart title", "x axis label", "y_axis_label")

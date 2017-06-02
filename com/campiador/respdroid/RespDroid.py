@@ -35,7 +35,7 @@ class RespDroid:
 
         self.store_data(resultLists)  # continue here: database does not work
 
-        #ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
         DatabaseManager.read_database()
 

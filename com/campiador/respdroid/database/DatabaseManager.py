@@ -18,8 +18,8 @@ def create_database_if_not_exists():
         print "table exists"
     else:
         print "table does not exist"
-        # Create table
-        c.execute('''CREATE TABLE respnodes
+        # Create table TODO: add timestamp, primary key for event id, and unique group id
+        c.execute('''CREATE TABLE respnodes 
                  (isdummy integer, date text, 
                  device text, time text, operation text, imgbase text, imgperc integer, imgsizekb integer)''')
     # Save (commit) the changes
@@ -56,7 +56,6 @@ def insert_query(data):
 
 def read_database():
     # this variable holds the true, we use the tuple to prevent sql injection attacks
-    print "reading database:"
     global c, conn
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
@@ -64,14 +63,9 @@ def read_database():
     t = (1,)
     c.execute('SELECT * FROM respnodes WHERE isdummy=?', t)
     data = (c.fetchall())
-    print data
-    for row in data:
-        print row
+
 
 def insert_objects(respnodes):
-    print "inserting objects:"
-    for respnode in respnodes:
-        print respnode.getImageName()
     query_data = convert_objects_to_query(respnodes)
     insert_query(query_data)
 
@@ -82,8 +76,6 @@ def convert_objects_to_query(respnodes):
         # TODO: timestamp and dummy flag should be handled in a higher level
         query_data.append((1, '2017-05-30', respnode.getDevice(), respnode.getTimeDuration(), respnode.getOperation(),
                            respnode.getBaseParam(), respnode.getScaleParam(), respnode.getImgSize()))
-    for query_element in query_data:
-        print "converted: {}".format(query_element)
     return query_data
 
 
