@@ -1,19 +1,19 @@
 import argparse
 import commands
+import itertools
 from sys import platform
 
 from com.campiador.respdroid.database import DatabaseManager
-from com.campiador.respdroid.graphics import ChartTest
-from com.campiador.respdroid.graphics.ChartDrawer import ChartDrawer
-from com.campiador.respdroid.util import DeviceInfo
-from com.campiador.respdroid.util.DataPreparation import DataPreparation
-from com.campiador.respdroid.model.RespNode import RespNode
+from com.campiador.respdroid.graphics import ChartDraw
+from com.campiador.respdroid.model import Operations
+from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
+from com.campiador.respdroid.model.map.DataPreparation import DataPreparation
+from com.campiador.respdroid.storage import PersistentData
+from com.campiador.respdroid.util import DeviceInfo, Utils
+from com.campiador.respdroid.util.Config import IS_DUMMY
 
-LOG_TIME = 10
+LOG_DURATION = 10
 NUMBER_OF_REPETITIONS = 10
-
-
-
 
 
 class RespDroid:
@@ -31,35 +31,45 @@ class RespDroid:
 
     def run_respdroid_dummy_data(self, repeat_count):
         print("running respdroid with dummy data")
+
         resultLists = self.get_dummy_data()
 
-        self.store_data(resultLists)  # continue here: database does not work
+        # TODO: do not save dummy data in the future
+        self.store_data(resultLists)
 
-        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
-        DatabaseManager.read_database()
-
+        DatabaseManager.print_database()
 
     def runRespDroid(self, repetition_max):
         print ("in runRespDroid")
         self.check_device_connections()
 
         resultLists = []  # this list will be filled by logcat
-        resultLists = self.logcat_to_respnode_list(resultLists)
+        resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists)
 
-        ChartTest.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        self.store_data(resultLists)  # CONTINUE HERE: database needs more debugging with node and group id
+
+        ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+
+        DatabaseManager.print_database()
 
 
+    def run_app_record_logcat_and_return_respnode_list(self, resultLists):
+        experiment_number = atomic_get_experiment_number()
 
-    def logcat_to_respnode_list(self, resultLists):
-        for device in self.devices:
-            # adbInstall in the future, I will install apps, path to which will be provided through args
-            self.adbClearLogcat(device)
-            self.adbStopApp(device, self.APP_PACKAGE)
-            self.adbRunApp(device, self.APP_PACKAGE)
-            resultString = self.adbLogcat(device, self.TAG_RESPDROID_DYNAMIC)
-            resultLists.append(DataPreparation().convertStringToImageList(resultString))
+        for _ in itertools.repeat(None, NUMBER_OF_REPETITIONS):
+            for device in self.devices:
+                # TODO: adbInstall in the future, I will install apps, path to which will be provided through args
+                self.adbClearLogcat(device)
+                self.adbStopApp(device, self.APP_PACKAGE)
+                self.adbRunApp(device, self.APP_PACKAGE)
+                resultString = self.adbRecordLogcat(device, self.TAG_RESPDROID_DYNAMIC)
+                resultLists.append(DataPreparation().convertStringToRespImgList(resultString, experiment_number))
+
         return resultLists
+
+
 
     def getDeviceList(self):
         device_list = []
@@ -75,29 +85,41 @@ class RespDroid:
             exit(1)
         return device_list
 
-
     def store_data(self, resultLists):
         for result_list in resultLists:
             DatabaseManager.insert_objects(result_list)
 
     def get_dummy_data(self):
+        experiment_id = atomic_get_experiment_number()
+
         resultLists = [
             [
-                RespNode("Nexus 4", 60, "decode-image", "sample_img_0", 1, 900),
-                RespNode("Nexus 4", 120, "decode-image", "sample_img_1", 1, 1000),
-                RespNode("Nexus 4", 220, "decode-image", "sample_img_2", 1, 1100),
-                RespNode("Nexus 4", 320, "decode-image", "sample_img_3", 1, 1200),
-                RespNode("Nexus 4", 420, "decode-image", "sample_img_4", 1, 1300),
-            ]
-            ,
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                         60, Operations.DECODE, "sample_img_0", 1, 900),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                         120, Operations.DECODE, "sample_img_1", 1, 1000),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                         220, Operations.DECODE, "sample_img_2", 1, 1100),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                         320, Operations.DECODE, "sample_img_3", 1, 1200),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                         420, Operations.DECODE, "sample_img_4", 1, 1300),
+            ],
+
             [
-                RespNode("Nexus 6", 40, "decode-image", "sample_img_0", 1, 900),
-                RespNode("Nexus 6", 80, "decode-image", "sample_img_1", 1, 1000),
-                RespNode("Nexus 6", 180, "decode-image", "sample_img_2", 1, 1100),
-                RespNode("Nexus 6", 280, "decode-image", "sample_img_3", 1, 1200),
-                RespNode("Nexus 6", 380, "decode-image", "sample_img_4", 1, 1300)
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                         40, Operations.DECODE, "sample_img_0", 1, 900),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                         80, Operations.DECODE, "sample_img_1", 1, 1000),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                         180, Operations.DECODE, "sample_img_2", 1, 1100),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                         280, Operations.DECODE, "sample_img_3", 1, 1200),
+                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                         380, Operations.DECODE, "sample_img_4", 1, 1300)
             ]
         ]
+
         return resultLists
 
     # TODO: compile app using gradle wrapper from Android Studio
@@ -135,14 +157,14 @@ class RespDroid:
             else:
                 print ("command {} had return value {}".format(adb_command_clear_logcat, return_value))
 
-    def adbLogcat(self, device, tag):
+    def adbRecordLogcat(self, device, tag):
         print("in adb logcat")
         ADB_COMMAND_LOGCAT = "adb -s " + str(device) + " logcat -s " + tag
 
         timeout_program_name = self.getOsSpecificTimeout();
 
         (return_value, adb_command_logcat_output) = \
-            commands.getstatusoutput(timeout_program_name + " " + str(LOG_TIME) + "s " + ADB_COMMAND_LOGCAT)
+            commands.getstatusoutput(timeout_program_name + " " + str(LOG_DURATION) + "s " + ADB_COMMAND_LOGCAT)
         print("adb logcat command executed")
 
         if (return_value == 0):
@@ -152,28 +174,6 @@ class RespDroid:
                 print ("command {} returned with value {}".format(ADB_COMMAND_LOGCAT, return_value))
 
         return adb_command_logcat_output
-
-    # NOTE:Function polymorphism does not exist in python, the last function will be used.
-    # def adbLogcat(self, tag):
-    #     print("in adb logcat")
-    #
-    #     ADB_COMMAND_LOGCAT = "adb logcat -s " + tag
-    #     (return_value, adb_command_logcat_output) = \
-    #         commands.getstatusoutput("timeout " + str(LOG_TIME)+ "s " + ADB_COMMAND_LOGCAT)
-    #     print("adb logcat command executed")
-    #     print("return_value:" + str(return_value))
-    #
-    #     for line in adb_command_logcat_output.splitlines():
-    #         print line
-    #
-    #     if (return_value == 0):
-    #         for line in adb_command_logcat_output.splitlines():
-    #             print line
-    #     else:
-    #         print ("command {} returned with value {}".format(ADB_COMMAND_LOGCAT, return_value))
-    #
-    #     return adb_command_logcat_output
-
 
     #     TODO: process args, e.g. app path
     def parseArgs(self):
@@ -200,5 +200,16 @@ class RespDroid:
             return "timeout"
 
 
-# RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)
-RespDroid().run_respdroid_dummy_data(NUMBER_OF_REPETITIONS)
+# Note: Careful here! # TODO: currently have to manually delete
+def clear_all_stored_data():
+    DatabaseManager.clear_database_if_exists()
+    PersistentData.save_experiment_id(0)
+
+
+DatabaseManager.create_database_if_not_exists()
+if IS_DUMMY == 1:
+    RespDroid().run_respdroid_dummy_data(NUMBER_OF_REPETITIONS)
+    # clear_all_stored_data()
+    # DatabaseManager.print_database()
+else:
+    RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)

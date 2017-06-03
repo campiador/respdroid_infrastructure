@@ -1,14 +1,9 @@
-import datetime
-import time
-
+import matplotlib.colors as colors
+import matplotlib.patches as mpatches
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib.patches as mpatches
 
-from com.campiador.respdroid.util.DataPreparation import DataPreparation
-
-import matplotlib.cm as cmx
-import matplotlib.colors as colors
+from com.campiador.respdroid.model.map.DataPreparation import DataPreparation
 
 # def get_cmap(N):
 #     '''Returns a function that maps each index in 0, 1, ... N-1 to a distinct
@@ -72,11 +67,9 @@ def createChart(resLists, chart_title, x_label, y_label):
 
     plt.legend(handles=legend_patches)
 
-    # important: we want the code to flow after drawing a chart. show() blocks by default.
-    ts = time.time()
-    plt.show(block=False)
-    stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    print stamp
+    # TODO: we want the code to flow after drawing a chart. show() blocks by default.
+    # plt.show(block=False)
+    plt.show()
 
     #plt.savefig('./{}'.format(date.ctime()))
 

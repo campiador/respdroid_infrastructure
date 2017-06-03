@@ -1,3 +1,6 @@
+DEVICE_NEXUS_4 = "Nexus 4"
+DEVICE_NEXUS_6P = "Nexus 6P"
+
 def getDeviceName(deviceID):
     if (deviceID == "8XV7N16125001298"):
         return "Nexus 6P"
