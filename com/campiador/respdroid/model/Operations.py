@@ -1,0 +1,6 @@
+DECODE = "Image Decode"
+SHARED_PREFS = "Shared Preferences"
+SAVE_FILE = "Save File"
+ANIMATION = "Animation"
+NETWORK = "Network"
+GPS = "GPS"

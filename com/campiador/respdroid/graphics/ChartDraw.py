@@ -72,11 +72,9 @@ def createChart(resLists, chart_title, x_label, y_label):
 
     plt.legend(handles=legend_patches)
 
-    # important: we want the code to flow after drawing a chart. show() blocks by default.
-    ts = time.time()
-    plt.show(block=False)
-    stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    print stamp
+    # TODO: we want the code to flow after drawing a chart. show() blocks by default.
+    # plt.show(block=False)
+    plt.show()
 
     #plt.savefig('./{}'.format(date.ctime()))
 

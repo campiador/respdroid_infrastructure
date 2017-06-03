@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 
+from com.campiador.respdroid.model import Operations
 from com.campiador.respdroid.model.RespNode import RespNode
 
 
 class DataPreparation:
-    def convertStringToImageList(self, imgResultString):
+    def convertStringToRespImgList(self, imgResultString, experiment_id):
         imgList = []
         for line in imgResultString.splitlines():
             line_elems = line.split("--")
@@ -14,7 +15,8 @@ class DataPreparation:
                 continue
             else:
 
-                respNode = RespNode(line_elems[6], line_elems[2], "decode image", line_elems[4], line_elems[5],
+                respNode = RespNode(experiment_id, line_elems[6], line_elems[2],
+                                    Operations.DECODE, line_elems[4], line_elems[5],
                                     line_elems[7])
                 imgList.append(respNode)
 
