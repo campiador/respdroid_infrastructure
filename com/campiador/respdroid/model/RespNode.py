@@ -16,6 +16,12 @@ class RespNode:
         self.img_perc = imgperc
         self.img_sizeKB = imgsizeKB
 
+    def __str__(self):
+        return "nid: " + str(self.node_id) + ", xid: " + str(self.experiment_id) + ", datetime: " + self.timestamp \
+             + ", device: " + self.device + ", delay: " + self.delay + ", operation: " + self.operation + ", imgbase: "\
+               + self.img_base + ", imgperc: " + str(self.img_perc) + ", sizeKB: " + str(self.img_sizeKB)
+
+
     def get_node_id(self):
         return self.node_id
 

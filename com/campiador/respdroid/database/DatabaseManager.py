@@ -27,6 +27,7 @@ CL_RESPDROID_IMG_BASE = "imgbase"
 CL_RESPDROID_IMG_PERC = "imgperc"
 CL_RESPDROID_IMG_SIZE_KB = "imgsizekb"
 
+
 def create_database_if_not_exists():
     global c, conn
     conn = sqlite3.connect(RESPDROID_DB)
@@ -42,9 +43,9 @@ def create_database_if_not_exists():
                           imgsizekb=CL_RESPDROID_IMG_SIZE_KB))
     # Save (commit) the changes
     conn.commit()
-    # We can also close the connection if we are done with it.
-    # Just be sure any changes have been committed or they will be lost.
+    # Note: be sure any changes have been committed or they will be lost.
     conn.close()
+
 
 # FIXME: respdroid constructor contract has been updated
 def insert_test_data():
@@ -80,7 +81,7 @@ def print_database():
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
-    t = (1,)
+    t = (IS_DUMMY,)
     c.execute('SELECT * FROM respnodes WHERE isdummy=?', t)
     data = (c.fetchall())
 
@@ -131,6 +132,7 @@ def load_experiments(experiments_tuple):
     global conn, c
     conn = sqlite3.connect(RESPDROID_DB)
     conn.text_factory = str
+    # This beautiful line of code enables dictcurser
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -138,18 +140,22 @@ def load_experiments(experiments_tuple):
     c.execute(query, experiments_tuple)
     data = (c.fetchall())
 
-    object_node_list = []
 
+    object_node_list = []
+    # EXTRA: use map() instead of the loop
     for experiment in data:
-            object_node = RespNode(experiment[CL_RESPDROID_NID], experiment[CL_RESPDROID_XID],
-                                   experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_DEVICE],
-                                   experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_OPERATION],
-                                   experiment[CL_RESPDROID_IMG_BASE], experiment[CL_RESPDROID_IMG_PERC],
-                                   experiment[CL_RESPDROID_IMG_SIZE_KB]
-                                   )
-            object_node_list.append(object_node)
+        object_node = RespNode(experiment[CL_RESPDROID_NID], experiment[CL_RESPDROID_XID],
+                               experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_DEVICE],
+                               experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_OPERATION],
+                               experiment[CL_RESPDROID_IMG_BASE], experiment[CL_RESPDROID_IMG_PERC],
+                               experiment[CL_RESPDROID_IMG_SIZE_KB]
+                               )
+        object_node_list.append(object_node)
+
+        print object_node
 
     return object_node_list
+
 
 def load_objects():
     print "loading objects"
