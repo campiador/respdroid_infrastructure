@@ -68,8 +68,8 @@ def createChart(resLists, chart_title, x_label, y_label):
     plt.legend(handles=legend_patches)
 
     # TODO: we want the code to flow after drawing a chart. show() blocks by default.
-    # plt.show(block=False)
-    plt.show()
+    plt.show(block=False)
+    # plt.show()
 
     #plt.savefig('./{}'.format(date.ctime()))
 

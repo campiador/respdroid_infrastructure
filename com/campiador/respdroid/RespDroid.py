@@ -39,7 +39,8 @@ class RespDroid:
 
         ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
-        DatabaseManager.print_database()
+        # DatabaseManager.print_database()
+        DatabaseManager.load_experiments((3,))
 
     def runRespDroid(self, repetition_max):
         print ("in runRespDroid")

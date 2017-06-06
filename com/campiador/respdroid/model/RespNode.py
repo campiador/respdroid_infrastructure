@@ -1,7 +1,7 @@
 # TODO: all nodes should inherit from an abstract base node, called UX node
 from com.campiador.respdroid.storage import PersistentData
 
-
+# TODO: add parameter megapixels
 class RespNode:
     def __init__(self, node_id, experiment_id, timestamp, device, delay, operation, imgbase, imgperc, imgsizeKB):
         self.node_id = node_id

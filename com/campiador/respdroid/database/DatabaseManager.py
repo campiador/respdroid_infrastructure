@@ -1,7 +1,12 @@
 import sqlite3
 
+import MySQLdb
+import MySQLdb.cursors
+from numpy import size
+
 from com.campiador.respdroid.model.RespNode import RespNode
 from com.campiador.respdroid.util.Config import IS_DUMMY
+
 
 
 # SCHEMA: id, experiment id, is_dummy? (1=true:0=false), date(time of operation on mobile device),
@@ -11,6 +16,16 @@ from com.campiador.respdroid.util.Config import IS_DUMMY
 RESPDROID_DB = './database/respdroid.db'
 RESPDROID_TB = 'respnodes' # TODO: extract all hardcoded references to this string
 
+CL_RESPDROID_XID = "experiment_id"
+CL_RESPDROID_NID = "id"
+CL_RESPDROID_IS_DUMMY = "is_dummy"
+CL_RESPDROID_DATETIME = "date"
+CL_RESPDROID_DEVICE = "device"
+CL_RESPDROID_DELAY = "time"
+CL_RESPDROID_OPERATION = "operation"
+CL_RESPDROID_IMG_BASE = "imgbase"
+CL_RESPDROID_IMG_PERC = "imgperc"
+CL_RESPDROID_IMG_SIZE_KB = "imgsizekb"
 
 def create_database_if_not_exists():
     global c, conn
@@ -19,9 +34,12 @@ def create_database_if_not_exists():
 
     if not table_exists(c):
         print "table does not exist"
-        c.execute('''CREATE TABLE respnodes (id integer primary key, experiment_id integer,  
-                 isdummy integer, date text, 
-                 device text, time text, operation text, imgbase text, imgperc integer, imgsizekb integer)''')
+        c.execute('''CREATE TABLE respnodes ({id} integer primary key, {xid} integer, {isdummy} integer, {date} text, 
+                 {device} text, {time} text, {operation} text, {imgbase} text, {imgperc} integer, {imgsizekb} integer)'''
+                  .format(id=CL_RESPDROID_NID, xid=CL_RESPDROID_XID, isdummy = CL_RESPDROID_IS_DUMMY,
+                          date=CL_RESPDROID_DATETIME, device=CL_RESPDROID_DEVICE, time=CL_RESPDROID_DELAY,
+                          operation=CL_RESPDROID_OPERATION, imgbase=CL_RESPDROID_IMG_BASE, imgperc=CL_RESPDROID_IMG_PERC,
+                          imgsizekb=CL_RESPDROID_IMG_SIZE_KB))
     # Save (commit) the changes
     conn.commit()
     # We can also close the connection if we are done with it.
@@ -98,3 +116,51 @@ def clear_database_if_exists():
     c.execute("DROP TABLE IF EXISTS respdroid.respnodes")
     conn.commit()
     conn.close()
+
+
+def load_experiments(experiments_tuple):
+    print "loading experiments"
+    condition = " WHERE"
+
+    for index, experiment in enumerate(experiments_tuple):
+        if index == 0:
+            condition = condition + " " + CL_RESPDROID_XID + " = " + "?"
+        else:
+            condition = condition + " OR " + CL_RESPDROID_XID + " = " + "?"
+
+    global conn, c
+    conn = sqlite3.connect(RESPDROID_DB)
+    conn.text_factory = str
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    query = "SELECT * FROM " + RESPDROID_TB + condition
+    c.execute(query, experiments_tuple)
+    data = (c.fetchall())
+
+    object_node_list = []
+
+    for experiment in data:
+            object_node = RespNode(experiment[CL_RESPDROID_NID], experiment[CL_RESPDROID_XID],
+                                   experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_DEVICE],
+                                   experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_OPERATION],
+                                   experiment[CL_RESPDROID_IMG_BASE], experiment[CL_RESPDROID_IMG_PERC],
+                                   experiment[CL_RESPDROID_IMG_SIZE_KB]
+                                   )
+            object_node_list.append(object_node)
+
+    return object_node_list
+
+def load_objects():
+    print "loading objects"
+    # this variable holds the true, we use the tuple to prevent sql injection attacks
+    global c, conn
+    conn = sqlite3.connect(RESPDROID_DB)
+    c = conn.cursor()
+
+    t = (1,)
+    c.execute('SELECT * FROM respnodes WHERE isdummy=?', t)
+    data = (c.fetchall())
+
+    for item in data:
+        print item
