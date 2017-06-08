@@ -5,7 +5,7 @@ import MySQLdb.cursors
 from numpy import size
 
 from com.campiador.respdroid.model.RespNode import RespNode
-from com.campiador.respdroid.util.Config import IS_DUMMY
+from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
 
 
@@ -86,8 +86,8 @@ def print_database():
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
-    t = (TB_RESPDROID, CL_RESPDROID_IS_DUMMY, IS_DUMMY,)
-    c.execute('SELECT * FROM {} WHERE {}={}'.format(TB_RESPDROID, CL_RESPDROID_IS_DUMMY, IS_DUMMY))
+    t = (TB_RESPDROID, CL_RESPDROID_IS_DUMMY, USE_DUMMY_DATA,)
+    c.execute('SELECT * FROM {} WHERE {}={}'.format(TB_RESPDROID, CL_RESPDROID_IS_DUMMY, USE_DUMMY_DATA))
     data = (c.fetchall())
 
     for item in data:
@@ -103,7 +103,7 @@ def map_objects_to_relational(respnodes):
     query_data= []
     for respnode in respnodes:
         # TODO: timestamp should be handled in a higher level
-        query_data.append((respnode.getExperimentId(), IS_DUMMY, respnode.get_timestamp(),
+        query_data.append((respnode.getExperimentId(), USE_DUMMY_DATA, respnode.get_timestamp(),
                            respnode.getDevice(), respnode.getTimeDuration(), respnode.getOperation(),
                            respnode.getBaseParam(), respnode.getScaleParam(),
                            respnode.getImgSize(), respnode.get_img_width(), respnode.get_img_height()))
@@ -171,7 +171,7 @@ def load_objects():
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
-    t = (CL_RESPDROID_IS_DUMMY, IS_DUMMY,)
+    t = (CL_RESPDROID_IS_DUMMY, USE_DUMMY_DATA,)
     c.execute('SELECT * FROM respnodes WHERE ?=?', t)
     data = (c.fetchall())
 

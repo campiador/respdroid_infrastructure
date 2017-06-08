@@ -9,11 +9,11 @@ from com.campiador.respdroid.model import Operations
 from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
 from com.campiador.respdroid.model.map.DataPreparation import DataPreparation
 from com.campiador.respdroid.storage import PersistentData
-from com.campiador.respdroid.util import DeviceInfo, Utils
-from com.campiador.respdroid.util.Config import IS_DUMMY
+from com.campiador.respdroid.util import DeviceInfo, time_and_date
+from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
 LOG_DURATION = 10
-NUMBER_OF_REPETITIONS = 10
+NUMBER_OF_REPETITIONS = 2
 
 
 class RespDroid:
@@ -39,8 +39,8 @@ class RespDroid:
 
         ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
-        DatabaseManager.load_experiments((66,))
         DatabaseManager.print_database()
+        DatabaseManager.load_experiments((66,))
 
     def runRespDroid(self, repetition_max):
         print ("in runRespDroid")
@@ -49,7 +49,7 @@ class RespDroid:
         resultLists = []  # this list will be filled by logcat
         resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists)
 
-        self.store_data(resultLists)  # CONTINUE HERE: database needs more debugging with node and group id
+        self.store_data(resultLists)
 
         ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
@@ -95,28 +95,28 @@ class RespDroid:
 
         resultLists = [
             [
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
                          60, Operations.DECODE, "sample_img_0", 1, 900, 800, 600),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
                          120, Operations.DECODE, "sample_img_1", 1, 1000, 900, 700),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
                          220, Operations.DECODE, "sample_img_2", 1, 1100, 1000, 800),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
                          320, Operations.DECODE, "sample_img_3", 1, 1200, 1100, 900),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
                          420, Operations.DECODE, "sample_img_4", 1, 1300, 1200, 1000)
             ],
 
             [
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
                          40, Operations.DECODE, "sample_img_0", 1, 900, 800, 600),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
                          80, Operations.DECODE, "sample_img_1", 1, 1000, 900, 700),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
                          180, Operations.DECODE, "sample_img_2", 1, 1100, 1000, 900),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
                          280, Operations.DECODE, "sample_img_3", 1, 1200, 1100, 1000),
-                RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
+                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
                          380, Operations.DECODE, "sample_img_4", 1, 1300, 1200, 1100)
             ]
         ]
@@ -208,7 +208,7 @@ def clear_all_stored_data():
 
 
 DatabaseManager.create_database_if_not_exists()
-if IS_DUMMY == 1:
+if USE_DUMMY_DATA == 1:
     RespDroid().run_respdroid_dummy_data(NUMBER_OF_REPETITIONS)
     # clear_all_stored_data()
     # DatabaseManager.print_database()

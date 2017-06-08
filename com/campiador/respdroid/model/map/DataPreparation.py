@@ -14,10 +14,10 @@ class DataPreparation:
                 # element not a log
                 continue
             else:
-
-                respNode = RespNode(0, experiment_id, line_elems[6], line_elems[2],
+                # FIXME: this is bug-prone, find a way to avoid magic numbers
+                respNode = RespNode(0, experiment_id, line_elems[9], line_elems[6], line_elems[2],
                                     Operations.DECODE, line_elems[4], line_elems[5],
-                                    line_elems[7])
+                                    line_elems[7], line_elems[8])
                 imgList.append(respNode)
 
         return imgList

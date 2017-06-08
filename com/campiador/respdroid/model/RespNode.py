@@ -1,4 +1,7 @@
+# A respnode object corresponds to one line of logcat which in turn represents one operation.
 # TODO: all nodes should inherit from an abstract base node, called UX node
+import json
+
 from com.campiador.respdroid.storage import PersistentData
 
 # TODO: add parameter megapixels
@@ -69,6 +72,8 @@ class RespNode:
     def get_img_megapixels(self):
         return self.img_MPs
 
+    def get_json(self):
+        s = json.dumps(self.__dict__) # s set to: {"x":1, "y":2}
     #
     # def __repr__(self):
     #     print("{}{}".format(self.getBaseParam(), self.getImgSize()))

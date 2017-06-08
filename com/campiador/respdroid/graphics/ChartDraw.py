@@ -13,6 +13,7 @@ from com.campiador.respdroid.model.map.DataPreparation import DataPreparation
 #     def map_index_to_rgb_color(index):
 #         return scalar_map.to_rgba(index)
 #     return map_index_to_rgb_color
+from com.campiador.respdroid.util import Config
 
 colors = ['r', 'b', 'g', 'y']
 
@@ -68,7 +69,7 @@ def createChart(resLists, chart_title, x_label, y_label):
     plt.legend(handles=legend_patches)
 
     # TODO: we want the code to flow after drawing a chart. show() blocks by default.
-    plt.show(block=False)
+    plt.show(block=Config.RESULT_CHART_BLOCKS)
     # plt.show()
 
     #plt.savefig('./{}'.format(date.ctime()))
