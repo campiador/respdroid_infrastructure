@@ -14,7 +14,7 @@ from com.campiador.respdroid.util.Config import IS_DUMMY
 # TODO: think of a primary key
 
 RESPDROID_DB = './database/respdroid.db'
-RESPDROID_TB = 'respnodes' # TODO: extract all hardcoded references to this string
+TB_RESPDROID = 'respnodes' # TODO: extract all hardcoded references to this string
 
 CL_RESPDROID_XID = "experiment_id"
 CL_RESPDROID_NID = "id"
@@ -26,6 +26,8 @@ CL_RESPDROID_OPERATION = "operation"
 CL_RESPDROID_IMG_BASE = "imgbase"
 CL_RESPDROID_IMG_PERC = "imgperc"
 CL_RESPDROID_IMG_SIZE_KB = "imgsizekb"
+CL_RESPDROID_IMG_WIDTH = "imgwidth"
+CL_RESPDROID_IMG_HEIGHT = "imgheight"
 
 
 def create_database_if_not_exists():
@@ -36,11 +38,14 @@ def create_database_if_not_exists():
     if not table_exists(c):
         print "table does not exist"
         c.execute('''CREATE TABLE respnodes ({id} integer primary key, {xid} integer, {isdummy} integer, {date} text, 
-                 {device} text, {time} text, {operation} text, {imgbase} text, {imgperc} integer, {imgsizekb} integer)'''
+                 {device} text, {time} text, {operation} text, {imgbase} text, {imgperc} integer, {imgsizekb} integer,
+                 {imgwidth} integer, {imgheight} integer)'''
                   .format(id=CL_RESPDROID_NID, xid=CL_RESPDROID_XID, isdummy = CL_RESPDROID_IS_DUMMY,
                           date=CL_RESPDROID_DATETIME, device=CL_RESPDROID_DEVICE, time=CL_RESPDROID_DELAY,
                           operation=CL_RESPDROID_OPERATION, imgbase=CL_RESPDROID_IMG_BASE, imgperc=CL_RESPDROID_IMG_PERC,
-                          imgsizekb=CL_RESPDROID_IMG_SIZE_KB))
+                          imgsizekb=CL_RESPDROID_IMG_SIZE_KB,
+                          imgwidth=CL_RESPDROID_IMG_WIDTH, imgheight=CL_RESPDROID_IMG_HEIGHT))
+
     # Save (commit) the changes
     conn.commit()
     # Note: be sure any changes have been committed or they will be lost.
@@ -69,7 +74,7 @@ def insert_query(data):
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
     # NOTE: using a NULL to have SQLite insert an auto-generated id
-    c.executemany('INSERT INTO respnodes VALUES (NULL,?,?,?,?,?,?,?,?,?)', data)
+    c.executemany('INSERT INTO respnodes VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?)', data)
     conn.commit()
     conn.close()
 
@@ -81,8 +86,8 @@ def print_database():
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
-    t = (IS_DUMMY,)
-    c.execute('SELECT * FROM respnodes WHERE isdummy=?', t)
+    t = (TB_RESPDROID, CL_RESPDROID_IS_DUMMY, IS_DUMMY,)
+    c.execute('SELECT * FROM {} WHERE {}={}'.format(TB_RESPDROID, CL_RESPDROID_IS_DUMMY, IS_DUMMY))
     data = (c.fetchall())
 
     for item in data:
@@ -100,7 +105,8 @@ def map_objects_to_relational(respnodes):
         # TODO: timestamp should be handled in a higher level
         query_data.append((respnode.getExperimentId(), IS_DUMMY, respnode.get_timestamp(),
                            respnode.getDevice(), respnode.getTimeDuration(), respnode.getOperation(),
-                           respnode.getBaseParam(), respnode.getScaleParam(), respnode.getImgSize()))
+                           respnode.getBaseParam(), respnode.getScaleParam(),
+                           respnode.getImgSize(), respnode.get_img_width(), respnode.get_img_height()))
     return query_data
 
 
@@ -136,19 +142,20 @@ def load_experiments(experiments_tuple):
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    query = "SELECT * FROM " + RESPDROID_TB + condition
+    query = "SELECT * FROM " + TB_RESPDROID + condition
     c.execute(query, experiments_tuple)
     data = (c.fetchall())
 
-
     object_node_list = []
     # EXTRA: use map() instead of the loop
+
     for experiment in data:
         object_node = RespNode(experiment[CL_RESPDROID_NID], experiment[CL_RESPDROID_XID],
                                experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_DEVICE],
                                experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_OPERATION],
                                experiment[CL_RESPDROID_IMG_BASE], experiment[CL_RESPDROID_IMG_PERC],
-                               experiment[CL_RESPDROID_IMG_SIZE_KB]
+                               experiment[CL_RESPDROID_IMG_SIZE_KB], experiment[CL_RESPDROID_IMG_WIDTH],
+                               experiment[CL_RESPDROID_IMG_HEIGHT]
                                )
         object_node_list.append(object_node)
 
@@ -164,8 +171,8 @@ def load_objects():
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
-    t = (1,)
-    c.execute('SELECT * FROM respnodes WHERE isdummy=?', t)
+    t = (CL_RESPDROID_IS_DUMMY, IS_DUMMY,)
+    c.execute('SELECT * FROM respnodes WHERE ?=?', t)
     data = (c.fetchall())
 
     for item in data:

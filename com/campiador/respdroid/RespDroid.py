@@ -39,8 +39,8 @@ class RespDroid:
 
         ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
-        # DatabaseManager.print_database()
-        DatabaseManager.load_experiments((3,))
+        DatabaseManager.load_experiments((66,))
+        DatabaseManager.print_database()
 
     def runRespDroid(self, repetition_max):
         print ("in runRespDroid")
@@ -53,7 +53,7 @@ class RespDroid:
 
         ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
-        DatabaseManager.print_database()
+        # DatabaseManager.print_database()
 
 
     def run_app_record_logcat_and_return_respnode_list(self, resultLists):
@@ -96,28 +96,28 @@ class RespDroid:
         resultLists = [
             [
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         60, Operations.DECODE, "sample_img_0", 1, 900),
+                         60, Operations.DECODE, "sample_img_0", 1, 900, 800, 600),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         120, Operations.DECODE, "sample_img_1", 1, 1000),
+                         120, Operations.DECODE, "sample_img_1", 1, 1000, 900, 700),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         220, Operations.DECODE, "sample_img_2", 1, 1100),
+                         220, Operations.DECODE, "sample_img_2", 1, 1100, 1000, 800),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         320, Operations.DECODE, "sample_img_3", 1, 1200),
+                         320, Operations.DECODE, "sample_img_3", 1, 1200, 1100, 900),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         420, Operations.DECODE, "sample_img_4", 1, 1300),
+                         420, Operations.DECODE, "sample_img_4", 1, 1300, 1200, 1000)
             ],
 
             [
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         40, Operations.DECODE, "sample_img_0", 1, 900),
+                         40, Operations.DECODE, "sample_img_0", 1, 900, 800, 600),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         80, Operations.DECODE, "sample_img_1", 1, 1000),
+                         80, Operations.DECODE, "sample_img_1", 1, 1000, 900, 700),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         180, Operations.DECODE, "sample_img_2", 1, 1100),
+                         180, Operations.DECODE, "sample_img_2", 1, 1100, 1000, 900),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         280, Operations.DECODE, "sample_img_3", 1, 1200),
+                         280, Operations.DECODE, "sample_img_3", 1, 1200, 1100, 1000),
                 RespNode(0, experiment_id, Utils.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         380, Operations.DECODE, "sample_img_4", 1, 1300)
+                         380, Operations.DECODE, "sample_img_4", 1, 1300, 1200, 1100)
             ]
         ]
 

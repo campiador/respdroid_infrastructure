@@ -15,7 +15,7 @@ class DataPreparation:
                 continue
             else:
 
-                respNode = RespNode(experiment_id, line_elems[6], line_elems[2],
+                respNode = RespNode(0, experiment_id, line_elems[6], line_elems[2],
                                     Operations.DECODE, line_elems[4], line_elems[5],
                                     line_elems[7])
                 imgList.append(respNode)
