@@ -4,6 +4,7 @@ import itertools
 from sys import platform
 
 from com.campiador.respdroid.database import DatabaseManager
+from com.campiador.respdroid.database.DatabaseManager import load_experiments
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.model import Operations
 from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
@@ -12,7 +13,7 @@ from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
-LOG_DURATION = 10
+LOG_DURATION = 20
 NUMBER_OF_REPETITIONS = 10
 
 
@@ -44,22 +45,26 @@ class RespDroid:
 
     def runRespDroid(self, n_iterations):
         print ("in runRespDroid")
-        # self.check_device_connections()
-        #
-        # resultLists = []  # this list will be filled by logcat
-        # resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations)
-        #
-        # self.store_data(resultLists)
-        #
-        # ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        self.check_device_connections()
 
+        resultLists = []  # this list will be filled by logcat
+        resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations)
+
+        self.store_data(resultLists)
+        #
+        # # resultLists = load_experiments((98, ))
+        # ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        # #
         DatabaseManager.print_database()
 
 
     def run_app_record_logcat_and_return_respnode_list(self, resultLists, n_iterations):
         experiment_number = atomic_get_experiment_number()
 
+        iteration = 0
         for _ in itertools.repeat(None, n_iterations):
+            iteration += 1
+            print("ITERATION: {}".format(iteration))
             for device in self.devices:
                 # TODO: adbInstall in the future, I will install apps, path to which will be provided through args
                 self.adbClearLogcat(device)

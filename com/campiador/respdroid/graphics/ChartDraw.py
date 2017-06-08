@@ -32,6 +32,7 @@ def createChart(resLists, chart_title, x_label, y_label):
             exit(1)
     legend_patches = []
 
+    # CONTINUE HERE: FIXME: why TypeError: iteration over non-sequence? prepare for boxplot. write a create box plot
     # TODO: check to make sure all x value lists are identical
     for i, resList in enumerate(resLists):
         x_temp = DataPreparation().imgListTitlesAndSizes(resList)
@@ -74,5 +75,6 @@ def createChart(resLists, chart_title, x_label, y_label):
 
     #plt.savefig('./{}'.format(date.ctime()))
 
-
+def create_box_chart(resList, chart_title, x_label, y_label):
+    ""
 # createChart([], "chart title", "x axis label", "y_axis_label")
