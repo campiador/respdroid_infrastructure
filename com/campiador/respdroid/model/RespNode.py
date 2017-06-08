@@ -2,6 +2,8 @@
 # TODO: all nodes should inherit from an abstract base node, called UX node
 import json
 
+import simplejson as simplejson
+
 from com.campiador.respdroid.storage import PersistentData
 
 # TODO: add parameter megapixels
@@ -17,11 +19,12 @@ class RespNode:
         if ".jpg" in imgbase:
             imgbase = imgbase.replace(".jpg", "")
         self.img_base = imgbase
-        self.img_perc = imgperc
+        self.img_perc = imgperc # FIXME: currently client sends img.length instead!
         self.img_sizeKB = imgsizeKB
-        self.imgWidth = img_height
-        self.imgHeight = img_width
+        self.imgWidth = int(img_height)
+        self.imgHeight = int(img_width)
         self.img_MPs = (self.imgHeight * self.imgWidth) / 1000000.0
+
 
     def __str__(self):
         return "nid: " + str(self.node_id) + ", xid: " + str(self.experiment_id) + ", datetime: " + self.timestamp \
@@ -72,8 +75,10 @@ class RespNode:
     def get_img_megapixels(self):
         return self.img_MPs
 
+    # serialize
     def get_json(self):
         s = json.dumps(self.__dict__) # s set to: {"x":1, "y":2}
+        return s
     #
     # def __repr__(self):
     #     print("{}{}".format(self.getBaseParam(), self.getImgSize()))
@@ -87,3 +92,22 @@ def atomic_get_experiment_number():
     experiment_number += 1
     PersistentData.save_experiment_id(experiment_number)
     return experiment_number
+
+
+# TODO: use these two to send data from Phone Client to RespDroid Server
+    #Serialize
+def respnodes_to_json(respnodes):
+    s = simplejson.dumps([respnode.__dict__ for respnode in respnodes])
+    print s
+
+
+    # Deserialize
+def json_to_respnodes(s):
+    clones = simplejson.loads(s)
+    print clones
+
+    # Now give our clones some life
+    for clone in clones:
+        respNode = RespNode()
+        respNode.__dict__ = clone
+        print respNode

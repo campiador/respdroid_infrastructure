@@ -7,20 +7,20 @@ from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.model import Operations
 from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
-from com.campiador.respdroid.model.map.DataPreparation import DataPreparation
+from com.campiador.respdroid.model.map.DataPreparation import DataPreparation, get_dummy_data
 from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
 LOG_DURATION = 10
-NUMBER_OF_REPETITIONS = 2
+NUMBER_OF_REPETITIONS = 10
 
 
 class RespDroid:
     def __init__(self):
         self.APP_PACKAGE = "com.campiador.respdroid"
         self.TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
-        self.devices = self.getDeviceList()
+        self.devices = DeviceInfo.getDeviceList()
 
     def check_device_connections(self):
         for device in self.devices:
@@ -29,37 +29,37 @@ class RespDroid:
             print("Error: no devices found!")
             exit(1)
 
-    def run_respdroid_dummy_data(self, repeat_count):
+    def run_respdroid_dummy_data(self, n_iterations):
         print("running respdroid with dummy data")
 
-        resultLists = self.get_dummy_data()
+        resultLists = get_dummy_data()
 
         # TODO: do not save dummy data in the future
         self.store_data(resultLists)
 
         ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
-        DatabaseManager.print_database()
-        DatabaseManager.load_experiments((66,))
-
-    def runRespDroid(self, repetition_max):
-        print ("in runRespDroid")
-        self.check_device_connections()
-
-        resultLists = []  # this list will be filled by logcat
-        resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists)
-
-        self.store_data(resultLists)
-
-        ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
-
         # DatabaseManager.print_database()
+        # DatabaseManager.load_experiments((66,))
+
+    def runRespDroid(self, n_iterations):
+        print ("in runRespDroid")
+        # self.check_device_connections()
+        #
+        # resultLists = []  # this list will be filled by logcat
+        # resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations)
+        #
+        # self.store_data(resultLists)
+        #
+        # ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+
+        DatabaseManager.print_database()
 
 
-    def run_app_record_logcat_and_return_respnode_list(self, resultLists):
+    def run_app_record_logcat_and_return_respnode_list(self, resultLists, n_iterations):
         experiment_number = atomic_get_experiment_number()
 
-        for _ in itertools.repeat(None, NUMBER_OF_REPETITIONS):
+        for _ in itertools.repeat(None, n_iterations):
             for device in self.devices:
                 # TODO: adbInstall in the future, I will install apps, path to which will be provided through args
                 self.adbClearLogcat(device)
@@ -70,58 +70,11 @@ class RespDroid:
 
         return resultLists
 
-
-
-    def getDeviceList(self):
-        device_list = []
-        ADB_COMMAND_DEVICES = "adb devices"
-        (return_value, adb_command_devices_output) = commands.getstatusoutput(ADB_COMMAND_DEVICES)
-        if (return_value == 0):
-            for line in adb_command_devices_output.splitlines():
-                if ("device" in line and "devices" not in line):
-                    devices = line.split()
-                    device_list.append(devices[0])
-        else:
-            print("command {} failed".format(ADB_COMMAND_DEVICES))
-            exit(1)
-        return device_list
-
     def store_data(self, resultLists):
         for result_list in resultLists:
             DatabaseManager.insert_objects(result_list)
 
-    def get_dummy_data(self):
-        experiment_id = atomic_get_experiment_number()
 
-        resultLists = [
-            [
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         60, Operations.DECODE, "sample_img_0", 1, 900, 800, 600),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         120, Operations.DECODE, "sample_img_1", 1, 1000, 900, 700),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         220, Operations.DECODE, "sample_img_2", 1, 1100, 1000, 800),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         320, Operations.DECODE, "sample_img_3", 1, 1200, 1100, 900),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_4,
-                         420, Operations.DECODE, "sample_img_4", 1, 1300, 1200, 1000)
-            ],
-
-            [
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         40, Operations.DECODE, "sample_img_0", 1, 900, 800, 600),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         80, Operations.DECODE, "sample_img_1", 1, 1000, 900, 700),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         180, Operations.DECODE, "sample_img_2", 1, 1100, 1000, 900),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         280, Operations.DECODE, "sample_img_3", 1, 1200, 1100, 1000),
-                RespNode(0, experiment_id, time_and_date.get_current_timestamp(), DeviceInfo.DEVICE_NEXUS_6P,
-                         380, Operations.DECODE, "sample_img_4", 1, 1300, 1200, 1100)
-            ]
-        ]
-
-        return resultLists
 
     # TODO: compile app using gradle wrapper from Android Studio
     def adbCompile(self, app_path):
@@ -214,3 +167,4 @@ if USE_DUMMY_DATA == 1:
     # DatabaseManager.print_database()
 else:
     RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)
+
