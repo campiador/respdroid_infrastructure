@@ -148,8 +148,8 @@ def load_experiments(experiments_tuple):
     data = (c.fetchall())
 
     object_node_list = []
-    # EXTRA: use map() instead of the loop
 
+    # EXTRA: extract a function and use a one-line map() instead of the loop
     for experiment in data:
         object_node = RespNode(experiment[CL_RESPDROID_NID], experiment[CL_RESPDROID_XID],
                                experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_DEVICE],

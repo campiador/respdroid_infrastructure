@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 
 from com.campiador.respdroid.model import Operations
-from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
+from com.campiador.respdroid.model.RespNode import RespNode
+from com.campiador.respdroid.storage.PersistentData import atomic_get_experiment_number
 from com.campiador.respdroid.util import time_and_date, DeviceInfo
 
 

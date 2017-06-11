@@ -7,7 +7,8 @@ from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.database.DatabaseManager import load_experiments
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.model import Operations
-from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
+from com.campiador.respdroid.model.RespNode import RespNode
+from com.campiador.respdroid.storage.PersistentData import atomic_get_experiment_number
 from com.campiador.respdroid.model.map.DataPreparation import DataPreparation, get_dummy_data
 from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
@@ -15,7 +16,7 @@ from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 from com.campiador.respdroid.util.installer import check_mysql_installed
 
 LOG_DURATION = 20
-NUMBER_OF_REPETITIONS = 1
+NUMBER_OF_REPETITIONS = 2
 
 
 class RespDroid:
@@ -64,7 +65,7 @@ class RespDroid:
         iteration = 0
         for _ in itertools.repeat(None, n_iterations):
             iteration += 1
-            print("ITERATION: {} of {}".format(iteration, n_iterations))
+            print("\n******** ITERATION: {} of {} ********\n".format(iteration, n_iterations))
             for device in self.devices:
                 # TODO: adbInstall in the future, I will install apps, path to which will be provided through args
                 self.adbClearLogcat(device)
@@ -182,5 +183,5 @@ def run_respdroid():
 init_respdroid()
 run_respdroid()
 
-
+# load_experiments((112,))
 
