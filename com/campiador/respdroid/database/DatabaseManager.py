@@ -1,7 +1,8 @@
 import sqlite3
 
-import MySQLdb
-import MySQLdb.cursors
+
+
+
 from numpy import size
 
 from com.campiador.respdroid.model.RespNode import RespNode

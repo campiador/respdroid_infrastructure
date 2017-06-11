@@ -12,9 +12,10 @@ from com.campiador.respdroid.model.map.DataPreparation import DataPreparation, g
 from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
+from com.campiador.respdroid.util.installer import check_mysql_installed
 
 LOG_DURATION = 20
-NUMBER_OF_REPETITIONS = 10
+NUMBER_OF_REPETITIONS = 1
 
 
 class RespDroid:
@@ -57,14 +58,13 @@ class RespDroid:
         # #
         DatabaseManager.print_database()
 
-
     def run_app_record_logcat_and_return_respnode_list(self, resultLists, n_iterations):
         experiment_number = atomic_get_experiment_number()
 
         iteration = 0
         for _ in itertools.repeat(None, n_iterations):
             iteration += 1
-            print("ITERATION: {}".format(iteration))
+            print("ITERATION: {} of {}".format(iteration, n_iterations))
             for device in self.devices:
                 # TODO: adbInstall in the future, I will install apps, path to which will be provided through args
                 self.adbClearLogcat(device)
@@ -165,11 +165,22 @@ def clear_all_stored_data():
     PersistentData.save_experiment_id(0)
 
 
-DatabaseManager.create_database_if_not_exists()
-if USE_DUMMY_DATA == 1:
-    RespDroid().run_respdroid_dummy_data(NUMBER_OF_REPETITIONS)
-    # clear_all_stored_data()
-    # DatabaseManager.print_database()
-else:
-    RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)
+def init_respdroid():
+    # check_mysql_installed() No longer need this dependency
+    DatabaseManager.create_database_if_not_exists()
+
+
+def run_respdroid():
+    if USE_DUMMY_DATA == 1:
+        RespDroid().run_respdroid_dummy_data(NUMBER_OF_REPETITIONS)
+        # clear_all_stored_data()
+        # DatabaseManager.print_database()
+    else:
+        RespDroid().runRespDroid(NUMBER_OF_REPETITIONS)
+
+
+init_respdroid()
+run_respdroid()
+
+
 
