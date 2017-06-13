@@ -4,7 +4,6 @@ import json
 
 import simplejson as simplejson
 
-from com.campiador.respdroid.storage import PersistentData
 
 # TODO: add parameter megapixels
 class RespNode:
@@ -87,13 +86,6 @@ class RespNode:
 
     # def __str__(self):
     #     print(self.getBaseParam() + "{}".format(self.getImgSize()))
-
-def atomic_get_experiment_number():
-    # FIXME: the next three lines should be ideally atomic
-    experiment_number = PersistentData.load_experiment_id()
-    experiment_number += 1
-    PersistentData.save_experiment_id(experiment_number)
-    return experiment_number
 
 
 # TODO: use these two to send data from Phone Client to RespDroid Server

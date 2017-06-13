@@ -14,3 +14,12 @@ def load_experiment_id():
         print "IO Warning: No previous experiments found, setting counter to 0."
         a = 0
     return a
+
+
+def atomic_get_experiment_number():
+    # FIXME: the next three lines should be ideally atomic,
+    # TODO: learn how to implement that in Python
+    experiment_number = load_experiment_id()
+    experiment_number += 1
+    save_experiment_id(experiment_number)
+    return experiment_number
