@@ -7,10 +7,11 @@ from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.database.DatabaseManager import load_experiments, print_database
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.model import Operations
-from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number, respnodes_to_json
+from com.campiador.respdroid.model.RespNode import RespNode, respnodes_to_json
 from com.campiador.respdroid.model.map.DataPreparation import get_dummy_data, \
     deserializeStringsToRespnodes
 from com.campiador.respdroid.storage import PersistentData
+from com.campiador.respdroid.storage.PersistentData import atomic_get_experiment_number
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 

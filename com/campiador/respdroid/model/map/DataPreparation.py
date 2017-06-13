@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import re
 
 from com.campiador.respdroid.model import Operations
-from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
+from com.campiador.respdroid.model.RespNode import RespNode
 from com.campiador.respdroid.model.responode_factory import deserialize_json_to_respnode, deserialize_dict_to_respnode
 from com.campiador.respdroid.util import time_and_date, DeviceInfo
 from com.campiador.respdroid.util.json_helper import is_valid_json
