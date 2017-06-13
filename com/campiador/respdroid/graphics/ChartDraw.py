@@ -3,7 +3,6 @@ import matplotlib.patches as mpatches
 import numpy as np
 from matplotlib import pyplot as plt
 
-from com.campiador.respdroid.model.map.DataPreparation import DataPreparation
 
 # def get_cmap(N):
 #     '''Returns a function that maps each index in 0, 1, ... N-1 to a distinct
@@ -13,6 +12,7 @@ from com.campiador.respdroid.model.map.DataPreparation import DataPreparation
 #     def map_index_to_rgb_color(index):
 #         return scalar_map.to_rgba(index)
 #     return map_index_to_rgb_color
+from com.campiador.respdroid.model.map import DataPreparation
 from com.campiador.respdroid.util import Config
 
 colors = ['r', 'b', 'g', 'y']
@@ -35,8 +35,8 @@ def createChart(resLists, chart_title, x_label, y_label):
     # CONTINUE HERE: FIXME: why TypeError: iteration over non-sequence? prepare for boxplot. write a create box plot
     # TODO: check to make sure all x value lists are identical
     for i, resList in enumerate(resLists):
-        x_temp = DataPreparation().imgListTitlesAndSizes(resList)
-        y_temp = DataPreparation().imgListValues(resList)
+        x_temp = DataPreparation.imgListTitlesAndSizes(resList)
+        y_temp = DataPreparation.imgListValues(resList)
 
         N_datapoints = len(x_temp)
 

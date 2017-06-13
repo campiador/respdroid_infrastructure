@@ -21,16 +21,18 @@ class RespNode:
         self.img_base = imgbase
         self.img_perc = imgperc # FIXME: currently client sends img.length instead!
         self.img_sizeKB = imgsizeKB
-        self.imgWidth = int(img_height)
-        self.imgHeight = int(img_width)
+        self.imgWidth = int(img_width)
+        self.imgHeight = int(img_height)
         self.img_MPs = (self.imgHeight * self.imgWidth) / 1000000.0
 
 
     def __str__(self):
-        return "nid: " + str(self.node_id) + ", xid: " + str(self.experiment_id) + ", datetime: " + self.timestamp \
-             + ", device: " + self.device + ", delay: " + self.delay + ", operation: " + self.operation + \
-               ", imgbase: " + self.img_base + ", imgperc: " + str(self.img_perc) + ", sizeKB: " \
-               + str(self.img_sizeKB) + ", Resolution: " + self.getImageResolution() + ", MPs: " + str(self.img_MPs)
+        return \
+            "nid: " + str(self.node_id) + ", xid: " + str(self.experiment_id) + ", datetime: " + self.timestamp \
+             + ", device: " + self.device + ", delay: " + str(self.delay) + ", operation: " + self.operation \
+            + ", imgbase: " + self.img_base + ", imgperc: " + str(self.img_perc) + ", "\
+               +"sizeKB: " + str(self.img_sizeKB) + ", Resolution: " + self.getImageResolution() \
+               + ", MPs: " + str(self.img_MPs)
 
     def get_node_id(self):
         return self.node_id
@@ -105,7 +107,6 @@ def respnodes_to_json(respnodes):
 def json_to_respnodes(s):
     clones = simplejson.loads(s)
     print clones
-
     # Now give our clones some life
     for clone in clones:
         respNode = RespNode()

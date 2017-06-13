@@ -4,19 +4,20 @@ import itertools
 from sys import platform
 
 from com.campiador.respdroid.database import DatabaseManager
-from com.campiador.respdroid.database.DatabaseManager import load_experiments
+from com.campiador.respdroid.database.DatabaseManager import load_experiments, print_database
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.model import Operations
-from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
-from com.campiador.respdroid.model.map.DataPreparation import DataPreparation, get_dummy_data
+from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number, respnodes_to_json
+from com.campiador.respdroid.model.map.DataPreparation import get_dummy_data, \
+    deserializeStringsToRespnodes
 from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
-LOG_DURATION = 20
-NUMBER_OF_REPETITIONS = 10
+LOG_DURATION = 2
+NUMBER_OF_REPETITIONS = 1
 
-
+# NOTE: it does not need to be a class
 class RespDroid:
     def __init__(self):
         self.APP_PACKAGE = "com.campiador.respdroid"
@@ -33,7 +34,8 @@ class RespDroid:
     def run_respdroid_dummy_data(self, n_iterations):
         print("running respdroid with dummy data")
 
-        resultLists = get_dummy_data()
+        current_experiment_id = atomic_get_experiment_number()
+        resultLists = get_dummy_data(current_experiment_id)
 
         # TODO: do not save dummy data in the future
         self.store_data(resultLists)
@@ -47,19 +49,27 @@ class RespDroid:
         print ("in runRespDroid")
         self.check_device_connections()
 
+        current_experiment_number = atomic_get_experiment_number()
+
         resultLists = []  # this list will be filled by logcat
-        resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations)
+        resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations,
+                                                                          current_experiment_number)
 
         self.store_data(resultLists)
+        print_database()
+
+        # Note: loading experiments from database has the benefit of having their Node ID
+        nodes = load_experiments((current_experiment_number,))
+
+
         #
         # # resultLists = load_experiments((98, ))
-        # ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        ChartDraw.createChart(nodes, "Responsiveness", "image name and size (KB)", "decode time (ms)")
         # #
-        DatabaseManager.print_database()
+        # DatabaseManager.print_database()
+        # respnodes_to_json(nodes)
 
-
-    def run_app_record_logcat_and_return_respnode_list(self, resultLists, n_iterations):
-        experiment_number = atomic_get_experiment_number()
+    def run_app_record_logcat_and_return_respnode_list(self, resultLists, n_iterations, current_experiment_id):
 
         iteration = 0
         for _ in itertools.repeat(None, n_iterations):
@@ -71,7 +81,8 @@ class RespDroid:
                 self.adbStopApp(device, self.APP_PACKAGE)
                 self.adbRunApp(device, self.APP_PACKAGE)
                 resultString = self.adbRecordLogcat(device, self.TAG_RESPDROID_DYNAMIC)
-                resultLists.append(DataPreparation().convertStringToRespImgList(resultString, experiment_number))
+                resultList = deserializeStringsToRespnodes(resultString, current_experiment_id)
+                resultLists.append(resultList)
 
         return resultLists
 

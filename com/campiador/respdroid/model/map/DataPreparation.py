@@ -1,60 +1,94 @@
+import json
+
 import matplotlib.pyplot as plt
+import re
 
 from com.campiador.respdroid.model import Operations
 from com.campiador.respdroid.model.RespNode import RespNode, atomic_get_experiment_number
+from com.campiador.respdroid.model.responode_factory import deserialize_json_to_respnode, deserialize_dict_to_respnode
 from com.campiador.respdroid.util import time_and_date, DeviceInfo
+from com.campiador.respdroid.util.json_helper import is_valid_json
 
 
-class DataPreparation:
-    def convertStringToRespImgList(self, imgResultString, experiment_id):
-        imgList = []
-        for line in imgResultString.splitlines():
-            line_elems = line.split("--")
-            # print("parsing line: " + str(line_elems))
-            # FIXME: a more robost method for detecting respdroid lines needed
-            if ("waiting" in line_elems[0] or "beginning" in line_elems[4]):
-                # element not a log
-                continue
+def deserializeStringsToRespnodes(logcat_lines_including_serialized_respnodes, experiment_id):
+    print("deserialize started")
+    respNodes = []
+    for line in logcat_lines_including_serialized_respnodes.splitlines():
+        # print("\n")
+        # line_elems = line.split("--")
+        # # print("parsing line: " + str(line_elems))
+        # # FIXME: a more robost method for detecting respdroid lines needed
+        # if ("waiting" in line_elems[0] or "beginning" in line_elems[4]):
+        #     # element not a log
+        #     continue
+        # else:
+        #     # FIXME: this is bug-prone, find a way to avoid magic numbers
+        #     # for index, elem in enumerate(line_elems):
+        #     #     print "line {}:{}".format(index, elem)
+        #     # exit(0)
+        #
+        #     # respNode = RespNode(0, experiment_id, line_elems[10], line_elems[6], line_elems[2],
+        #     #                     Operations.DECODE, line_elems[4], line_elems[5],
+        #     #                     line_elems[7], line_elems[8], line_elems[9])
+        #     # respNodes.append(respNode)
+
+        if "{" in line: #probably json
+            # print "line is probably valid json"
+            # print line
+            # remove the logcat info in front of the log
+            sanitized_line = re.sub(r'.*{', '{', line)
+            # print "sanitized line:"
+            # print sanitzed_line
+            if is_valid_json(sanitized_line):
+                # print("valid json")
+                # print(sanitized_line)
+                dct = json.loads(sanitized_line)
+                respNode = deserialize_dict_to_respnode(dct)
+                # print str(respNode.getImageResolution())
+                # print respNode
+                # the client device does not know the experiment ID. We know it
+                respNode.experiment_id = experiment_id
+                respNodes.append(respNode)
             else:
-                # FIXME: this is bug-prone, find a way to avoid magic numbers
-                # for index, elem in enumerate(line_elems):
-                #     print "line {}:{}".format(index, elem)
-                # exit(0)
-                respNode = RespNode(0, experiment_id, line_elems[10], line_elems[6], line_elems[2],
-                                    Operations.DECODE, line_elems[4], line_elems[5],
-                                    line_elems[7], line_elems[8], line_elems[9])
-                imgList.append(respNode)
-
-        return imgList
-
-    def imgListTitles(self, imgList):
-        titles = []
-        for node in imgList:
-            titles.append(node.getImageName())
-        return titles
-
-    def imgListTitlesAndSizes(self, imgList):
-        titles = []
-        for node in imgList:
-            titles.append("{} ({})".format(node.getImageName(), node.getImgSize()))
-        return titles
-
-    def imgs_title_and_mp(self, imgs):
-        titles_mps = []
-        for node in imgs:
-            titles_mps.append("{}()".format(node.getImageName(), node.get_img_megapixels()))
-        return titles_mps
+                # print("bad json format:")
+                # print(sanitzed_line)
+                print("waring: line starts with \{ but is not json")
+        else:
+            # print("line was useless logcat")
+            ""
+    print("deserialize ended")
+    for node in respNodes:
+        print node
+    return respNodes
 
 
-    def imgListValues(self, imgList):
-        values = []
-        for node in imgList:
-            values.append(node.getTimeDuration())
-        return values
+def imgListTitles(imgList):
+    titles = []
+    for node in imgList:
+        titles.append(node.getImageName())
+    return titles
+
+def imgListTitlesAndSizes(imgList):
+    titles = []
+    for node in imgList:
+        titles.append("{} ({})".format(node.getImageName(), node.getImgSize()))
+    return titles
+
+def imgs_title_and_mp(imgs):
+    titles_mps = []
+    for node in imgs:
+        titles_mps.append("{}()".format(node.getImageName(), node.get_img_megapixels()))
+    return titles_mps
 
 
-def get_dummy_data():
-    experiment_id = atomic_get_experiment_number()
+def imgListValues(imgList):
+    values = []
+    for node in imgList:
+        values.append(node.getTimeDuration())
+    return values
+
+
+def get_dummy_data(experiment_id):
 
     resultLists = [
         [
@@ -83,10 +117,6 @@ def get_dummy_data():
                      380, Operations.DECODE, "sample_img_4", 1, 1300, 1200, 1100)
         ]
     ]
-
-    for result_list in resultLists:
-        for result in result_list:
-            print result.get_json()
 
     return resultLists
 
