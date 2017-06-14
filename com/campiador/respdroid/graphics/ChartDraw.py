@@ -76,5 +76,15 @@ def createChart(resLists, chart_title, x_label, y_label):
     #plt.savefig('./{}'.format(date.ctime()))
 
 def create_box_chart(resList, chart_title, x_label, y_label):
+    # fake up some data
+    spread = np.random.rand(50) * 100
+    center = np.ones(25) * 50
+    flier_high = np.random.rand(10) * 100 + 100
+    flier_low = np.random.rand(10) * -100
+    data = np.concatenate((spread, center, flier_high, flier_low), 0)
+
+    # basic plot
+    plt.boxplot(data)
+
     ""
 # createChart([], "chart title", "x axis label", "y_axis_label")

@@ -126,15 +126,34 @@ def clear_database_if_exists():
     conn.close()
 
 
-def load_experiments(experiments_tuple):
-    print "loading experiments"
-    condition = " WHERE"
+def load_experiments(*experiments_tuple, **other_conditions):
+    """ :param experiment_tuple: the experiment id(s) should be a tuple. So e.g. for loading experiment 102, use (102,).
 
-    for index, experiment in enumerate(experiments_tuple):
-        if index == 0:
-            condition = condition + " " + CL_RESPDROID_XID + " = " + "?"
-        else:
-            condition = condition + " OR " + CL_RESPDROID_XID + " = " + "?"
+        :param other_conditions: User can provide any number of conditions through a **dictionary.\
+        For 0 conditions, don't provide any dict."""
+
+    print "loading experiments"
+    print("loading {} experiments and found {} conditions in kwargs".format(len(experiments_tuple), len(other_conditions)))
+    condition = ""
+    if len(experiments_tuple) > 0 or len(other_conditions > 0):
+        condition = " WHERE"
+    if len(experiments_tuple) > 0:
+        condition = condition + " (" # otherwise the future ANDS take precedence and qualify only the last OR
+        for index, experiment in enumerate(experiments_tuple):
+            if index == 0:
+                condition = condition + " " + CL_RESPDROID_XID + " = " + "?"
+            else:
+                condition = condition + " OR " + CL_RESPDROID_XID + " = " + "?"
+        condition = condition + " )"
+
+
+    if len(other_conditions) > 0:
+        for k, v in other_conditions.iteritems():
+            condition = condition + " AND "
+            condition = condition + "{} = {}".format(k, v)
+
+    print condition
+    exit(0)
 
     global conn, c
     conn = sqlite3.connect(RESPDROID_DB)

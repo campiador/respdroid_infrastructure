@@ -15,8 +15,8 @@ from com.campiador.respdroid.storage.PersistentData import atomic_get_experiment
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
-LOG_DURATION = 2
-NUMBER_OF_REPETITIONS = 1
+LOG_DURATION = 4
+NUMBER_OF_REPETITIONS = 10
 
 # NOTE: it does not need to be a class
 class RespDroid:
@@ -35,13 +35,16 @@ class RespDroid:
     def run_respdroid_dummy_data(self, n_iterations):
         print("running respdroid with dummy data")
 
-        current_experiment_id = atomic_get_experiment_number()
-        resultLists = get_dummy_data(current_experiment_id)
+        # current_experiment_id = atomic_get_experiment_number()
+        # resultLists = get_dummy_data(current_experiment_id)
+
+        load_experiments(())
 
         # TODO: do not save dummy data in the future
-        self.store_data(resultLists)
+        # self.store_data(resultLists)
 
-        ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        # ChartDraw.createChart(resultLists, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+
 
         # DatabaseManager.print_database()
         # DatabaseManager.load_experiments((66,))
@@ -50,22 +53,29 @@ class RespDroid:
         print ("in runRespDroid")
         self.check_device_connections()
 
-        current_experiment_number = atomic_get_experiment_number()
-
-        resultLists = []  # this list will be filled by logcat
-        resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations,
-                                                                          current_experiment_number)
-
-        self.store_data(resultLists)
-        print_database()
+        # current_experiment_number = atomic_get_experiment_number()
+        #
+        # resultLists = []  # this list will be filled by logcat
+        # resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations,
+        #                                                                   current_experiment_number)
+        #
+        # self.store_data(resultLists)
+        # print_database()
 
         # Note: loading experiments from database has the benefit of having their Node ID
-        nodes = load_experiments((current_experiment_number,))
+        # nodes = load_experiments((current_experiment_number,))
 
+        #FIXME: case no experiment id selected
+        nodes = load_experiments(**{DatabaseManager.CL_RESPDROID_DEVICE :
+                                                "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
+                                            DatabaseManager.CL_RESPDROID_IMG_BASE : "\'" + "b.20" + "\'"
+                                            }
+                                )
 
+        # print_database()
         #
         # # resultLists = load_experiments((98, ))
-        ChartDraw.createChart(nodes, "Responsiveness", "image name and size (KB)", "decode time (ms)")
+        # ChartDraw.createChart(nodes, "Responsiveness", "image name and size (KB)", "decode time (ms)")
         # #
         # DatabaseManager.print_database()
         # respnodes_to_json(nodes)
