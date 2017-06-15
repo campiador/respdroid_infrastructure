@@ -74,10 +74,11 @@ def imgListTitlesAndSizes(imgList):
         titles.append("{} ({})".format(node.getImageName(), node.getImgSize()))
     return titles
 
+
 def imgs_title_and_mp(imgs):
     titles_mps = []
     for node in imgs:
-        titles_mps.append("{}()".format(node.getImageName(), node.get_img_megapixels()))
+        titles_mps.append("{}({})".format(node.getImageName(), node.get_img_megapixels()))
     return titles_mps
 
 
