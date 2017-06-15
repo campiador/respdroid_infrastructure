@@ -126,7 +126,7 @@ def clear_database_if_exists():
     conn.close()
 
 
-def load_experiments(*experiments_tuple, **other_conditions):
+def load_experiments(limit, *experiments_tuple, **other_conditions):
     """ :param experiment_tuple: the experiment id(s) should be a tuple. So e.g. for loading experiment 102, use (102,).
 
         :param other_conditions: User can provide any number of conditions through a **dictionary.\
@@ -134,10 +134,18 @@ def load_experiments(*experiments_tuple, **other_conditions):
 
     print "loading experiments"
     print("loading {} experiments and found {} conditions in kwargs".format(len(experiments_tuple), len(other_conditions)))
+    print("experiment tuple: {}".format(experiments_tuple))
     condition = ""
-    if len(experiments_tuple) > 0 or len(other_conditions > 0):
+
+    if len(experiments_tuple) > 0: # and experiments_tuple != (0,):
         condition = " WHERE"
-    if len(experiments_tuple) > 0:
+        # print "experiments_tuple != (0,)"
+
+    if len(other_conditions) > 0:
+        if not condition.startswith(" WHERE"):
+            condition = " WHERE" + condition
+
+    if len(experiments_tuple) > 0: # and experiments_tuple != (0,):
         condition = condition + " (" # otherwise the future ANDS take precedence and qualify only the last OR
         for index, experiment in enumerate(experiments_tuple):
             if index == 0:
@@ -152,8 +160,13 @@ def load_experiments(*experiments_tuple, **other_conditions):
             condition = condition + " AND "
             condition = condition + "{} = {}".format(k, v)
 
+    if condition.startswith(" WHERE AND"):
+        condition = condition.replace(" WHERE AND", " WHERE", 1)
+
+    if limit != 0:
+        condition += " LIMIT {}".format(limit)
+
     print condition
-    exit(0)
 
     global conn, c
     conn = sqlite3.connect(RESPDROID_DB)
@@ -163,7 +176,9 @@ def load_experiments(*experiments_tuple, **other_conditions):
     c = conn.cursor()
 
     query = "SELECT * FROM " + TB_RESPDROID + condition
+    print query
     c.execute(query, experiments_tuple)
+
     data = (c.fetchall())
 
     object_node_list = []

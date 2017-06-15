@@ -1,11 +1,13 @@
 import argparse
 import commands
 import itertools
+from jinja2 import nodes
 from sys import platform
 
 from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.database.DatabaseManager import load_experiments, print_database
 from com.campiador.respdroid.graphics import ChartDraw
+from com.campiador.respdroid.graphics.ChartDraw import create_box_chart
 from com.campiador.respdroid.model import Operations
 from com.campiador.respdroid.model.RespNode import RespNode, respnodes_to_json
 from com.campiador.respdroid.model.map.DataPreparation import get_dummy_data, \
@@ -38,7 +40,7 @@ class RespDroid:
         # current_experiment_id = atomic_get_experiment_number()
         # resultLists = get_dummy_data(current_experiment_id)
 
-        load_experiments(())
+        # load_experiments(())
 
         # TODO: do not save dummy data in the future
         # self.store_data(resultLists)
@@ -51,7 +53,7 @@ class RespDroid:
 
     def runRespDroid(self, n_iterations):
         print ("in runRespDroid")
-        self.check_device_connections()
+        # self.check_device_connections()
 
         # current_experiment_number = atomic_get_experiment_number()
         #
@@ -65,12 +67,22 @@ class RespDroid:
         # Note: loading experiments from database has the benefit of having their Node ID
         # nodes = load_experiments((current_experiment_number,))
 
-        #FIXME: case no experiment id selected
-        nodes = load_experiments(**{DatabaseManager.CL_RESPDROID_DEVICE :
+        # #FIXME: case no experiment id selected
+        nodes = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE :
                                                 "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                             DatabaseManager.CL_RESPDROID_IMG_BASE : "\'" + "b.20" + "\'"
                                             }
+
                                 )
+
+        print("# results found: {}".format(len(nodes)))
+        for node in nodes:
+            print node
+
+
+        # create_box_chart(resList=[], chart_title="", x_label="", y_label="")
+
+
 
         # print_database()
         #
