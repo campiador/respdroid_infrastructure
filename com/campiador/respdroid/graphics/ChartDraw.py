@@ -112,7 +112,7 @@ def create_box_chart_x1(resList, chart_title, x_label, y_label):
 
     # basic plot
     plt.figure()
-    plt.boxplot(y_data, 0, 'gD', positions=x_data, showfliers=True, showmeans=True)
+    plt.boxplot(y_data, 0, 'gD', positions=x_data)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(chart_title)
