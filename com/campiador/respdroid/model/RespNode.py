@@ -4,11 +4,16 @@ import json
 
 import simplejson as simplejson
 
-
 # TODO: add parameter megapixels
 class RespNode:
     def __init__(self, node_id, experiment_id, timestamp, device, delay, operation, imgbase, imgperc, imgsizeKB,
-                 img_width, img_height, app_name, package_name, app_version, os_version, activity_name):
+                 img_width, img_height, os_version_release_name, package_name, app_name, app_version_code,
+                 activity_name):
+        self.activity_name = activity_name
+        self.app_version_code = app_version_code
+        self.app_name = app_name
+        self.package_name = package_name
+        self.os_version_release_name = os_version_release_name
         self.node_id = node_id
         self.experiment_id = experiment_id
         self.timestamp = timestamp
@@ -30,7 +35,11 @@ class RespNode:
              + ", device: " + self.device + ", delay: " + str(self.delay) + ", operation: " + self.operation \
             + ", imgbase: " + self.img_base + ", imgperc: " + str(self.img_perc) + ", "\
                +"sizeKB: " + str(self.img_sizeKB) + ", Resolution: " + self.getImageResolution() \
-               + ", MPs: " + str(self.img_MPs)
+               + ", MPs: " + str(self.img_MPs) \
+            + ", appname:" + self.app_name + ", package_name:" + self.package_name \
+            + ", app_version_code:" + str(self.app_version_code) \
+            + ", os_version_release_name:" + self.os_version_release_name \
+            + ", activity_name:" + self.activity_name
 
     def __repr__(self):
         return \
@@ -38,7 +47,11 @@ class RespNode:
              + ", device: " + self.device + ", delay: " + str(self.delay) + ", operation: " + self.operation \
             + ", imgbase: " + self.img_base + ", imgperc: " + str(self.img_perc) + ", "\
                +"sizeKB: " + str(self.img_sizeKB) + ", Resolution: " + self.getImageResolution() \
-               + ", MPs: " + str(self.img_MPs)
+               + ", MPs: " + str(self.img_MPs) \
+               + ", appname:" + self.app_name + ", package_name:" + self.package_name \
+               + ", app_version_code:" + str(self.app_version_code) \
+            + ", os_version_release_name:" + self.os_version_release_name \
+            + ", activity_name:" + self.activity_name
 
 
     def get_node_id(self):
