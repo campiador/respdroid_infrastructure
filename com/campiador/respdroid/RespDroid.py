@@ -12,12 +12,12 @@ from com.campiador.respdroid.model.RespNode import RespNode, respnodes_to_json
 from com.campiador.respdroid.model.map.DataPreparation import get_dummy_data, \
     deserializeStringsToRespnodes
 from com.campiador.respdroid.storage import PersistentData
-from com.campiador.respdroid.storage.PersistentData import atomic_get_experiment_number
+from com.campiador.respdroid.storage.PersistentData import atomic_get_new_experiment_number
 from com.campiador.respdroid.util import DeviceInfo, time_and_date
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
 LOG_DURATION = 4
-NUMBER_OF_ITERATIONS = 2
+NUMBER_OF_ITERATIONS = 1
 
 # NOTE: it does not need to be a class
 class RespDroid:
@@ -52,37 +52,97 @@ class RespDroid:
 
     def runRespDroid(self, n_iterations):
         print ("in runRespDroid")
-        # self.check_device_connections()
-        #
-        # current_experiment_number = atomic_get_experiment_number()
-        #
-        # resultLists = []  # this list will be filled by logcat
-        # resultLists = self.run_app_record_logcat_and_return_respnode_list(resultLists, n_iterations,
-        #                                                                   current_experiment_number)
+        self.check_device_connections()
+
+        # current_experiment_number = atomic_get_new_experiment_number()
+        current_experiment_number = 0
+
+
+        result_lists = self.run_app_record_logcat_and_return_respnode_list(n_iterations,
+                                                                          current_experiment_number)
         #
         # self.store_data(resultLists)
 
+        print "APP RUN FINISHED"
+        for result_list in result_lists:
+            print result_list
 
-
-
-        nodes_1 = load_experiments(10, **{DatabaseManager.CL_RESPDROID_DEVICE:
-                                              "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
-                                          DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.20" + "\'"
-                                          }
-
-                                   )
-
-        ChartDraw.create_box_chart_x1(nodes_1, "Respdroid Statistics", "size in KB", "operation delay")
+        ChartDraw.x4_createChart(result_lists, "Responsiveness", "image name and megapixels", "decode time (ms)")
 
         # print_database()
         #
         # exit(0)
 
+    def load_results_for_experiment_4(self):
+        nodes_2_n6p_a20 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                      "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
+                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "a.20" + "\'"
+                                                  }
+                                           )
+        nodes_2_n6p_b40 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                      "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
+                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.40" + "\'"
+                                                  }
+                                           )
+        nodes_2_n6p_b60 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                      "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
+                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.60" + "\'"
+                                                  }
+                                           )
+        nodes_2_n6p_c80 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                      "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
+                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "c.80" + "\'"
+                                                  }
+                                           )
+        nodes_2_n6p_b1100 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                        "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
+                                                    DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b1.100" + "\'"
+                                                    }
 
+                                             )
+        # N4:
+        nodes_2_n4_a20 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                     "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
+                                                 DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "a.20" + "\'"
+                                                 }
+                                          )
+        nodes_2_n4_b40 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                     "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
+                                                 DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.40" + "\'"
+                                                 }
+                                          )
+        nodes_2_n4_b60 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                     "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
+                                                 DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.60" + "\'"
+                                                 }
+                                          )
+        nodes_2_n4_c80 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                     "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
+                                                 DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "c.80" + "\'"
+                                                 }
+                                          )
+        nodes_2_n4_b1_100 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
+                                                        "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
+                                                    DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b1.100" + "\'"
+                                                    }
 
+                                             )
+        n4s = [get_average_in_one_node(nodes_2_n4_b1_100), get_average_in_one_node(nodes_2_n4_b40),
+               get_average_in_one_node(nodes_2_n4_c80), get_average_in_one_node(nodes_2_n4_a20),
+               get_average_in_one_node(nodes_2_n4_b60)
+               ]
+        n6ps = [get_average_in_one_node(nodes_2_n6p_b1100),
+                get_average_in_one_node(nodes_2_n6p_b40),
+                get_average_in_one_node(nodes_2_n6p_c80),
+                get_average_in_one_node(nodes_2_n6p_a20),
+                get_average_in_one_node(nodes_2_n6p_b60)
+                ]
+        # only averages count
+        nodes = [n4s, n6ps]
+        return nodes
 
-
-    def run_app_record_logcat_and_return_respnode_list(self, resultLists, n_iterations, current_experiment_id):
+    def run_app_record_logcat_and_return_respnode_list(self, n_iterations, current_experiment_id):
+        respnode_lists = []
 
         iteration = 0
         for _ in itertools.repeat(None, n_iterations):
@@ -95,9 +155,9 @@ class RespDroid:
                 self.adbRunApp(device, self.APP_PACKAGE)
                 resultString = self.adbRecordLogcat(device, self.TAG_RESPDROID_DYNAMIC)
                 resultList = deserializeStringsToRespnodes(resultString, current_experiment_id)
-                resultLists.append(resultList)
+                respnode_lists.append(resultList)
 
-        return resultLists
+        return respnode_lists
 
     def store_data(self, resultLists):
         for result_list in resultLists:
@@ -197,13 +257,13 @@ def get_average_in_one_node(nodes):
     nodes[0].delay = str(average)
     return nodes[0]
 
+if __name__ == "__main__":
 
-
-DatabaseManager.create_database_if_not_exists()
-if USE_DUMMY_DATA == 1:
-    RespDroid().run_respdroid_dummy_data(NUMBER_OF_ITERATIONS)
-    # clear_all_stored_data()
-    # DatabaseManager.print_database()
-else:
-    RespDroid().runRespDroid(NUMBER_OF_ITERATIONS)
+    DatabaseManager.create_database_if_not_exists()
+    if USE_DUMMY_DATA == 1:
+        RespDroid().run_respdroid_dummy_data(NUMBER_OF_ITERATIONS)
+        # clear_all_stored_data()
+        # DatabaseManager.print_database()
+    else:
+        RespDroid().runRespDroid(NUMBER_OF_ITERATIONS)
 

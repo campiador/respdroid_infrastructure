@@ -16,7 +16,7 @@ def load_experiment_id():
     return a
 
 
-def atomic_get_experiment_number():
+def atomic_get_new_experiment_number():
     # FIXME: the next three lines should be ideally atomic,
     # TODO: learn how to implement that in Python
     experiment_number = load_experiment_id()

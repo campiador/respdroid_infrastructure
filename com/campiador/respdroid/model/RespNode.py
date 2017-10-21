@@ -8,7 +8,7 @@ import simplejson as simplejson
 # TODO: add parameter megapixels
 class RespNode:
     def __init__(self, node_id, experiment_id, timestamp, device, delay, operation, imgbase, imgperc, imgsizeKB,
-                 img_width, img_height):
+                 img_width, img_height, app_name, package_name, app_version, os_version, activity_name):
         self.node_id = node_id
         self.experiment_id = experiment_id
         self.timestamp = timestamp
@@ -24,7 +24,6 @@ class RespNode:
         self.imgHeight = int(img_height)
         self.img_MPs = (self.imgHeight * self.imgWidth) / 1000000.0
 
-
     def __str__(self):
         return \
             "nid: " + str(self.node_id) + ", xid: " + str(self.experiment_id) + ", datetime: " + self.timestamp \
@@ -32,6 +31,15 @@ class RespNode:
             + ", imgbase: " + self.img_base + ", imgperc: " + str(self.img_perc) + ", "\
                +"sizeKB: " + str(self.img_sizeKB) + ", Resolution: " + self.getImageResolution() \
                + ", MPs: " + str(self.img_MPs)
+
+    def __repr__(self):
+        return \
+            "nid: " + str(self.node_id) + ", xid: " + str(self.experiment_id) + ", datetime: " + self.timestamp \
+             + ", device: " + self.device + ", delay: " + str(self.delay) + ", operation: " + self.operation \
+            + ", imgbase: " + self.img_base + ", imgperc: " + str(self.img_perc) + ", "\
+               +"sizeKB: " + str(self.img_sizeKB) + ", Resolution: " + self.getImageResolution() \
+               + ", MPs: " + str(self.img_MPs)
+
 
     def get_node_id(self):
         return self.node_id

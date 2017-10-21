@@ -1,6 +1,7 @@
 from com.campiador.respdroid.RespDroid import get_average_in_one_node
 from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.database.DatabaseManager import load_experiments
+from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.util import DeviceInfo
 
 
@@ -51,61 +52,61 @@ def experiment_2():
     ChartDraw.createChart(nodes, "Responsiveness", "image name and size (KB)", "decode time (ms)")
 
 
-def experiment_3():
-    pass
+def experiment3():
+    # pass
     #
     # # XP 3:
     # #N6
-    nodes_2_n6p_a20 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_a20 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "a.20" + "\'"
                                                }
                                        )
-    nodes_2_n6p_b40 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_b40 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.40" + "\'"
                                                }
                                        )
-    nodes_2_n6p_b60 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_b60 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.60" + "\'"
                                                }
                                        )
-    nodes_2_n6p_c80 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_c80 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "c.80" + "\'"
                                                }
                                        )
 
-    nodes_2_n6p_b1100 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_b1100 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                      "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b1.100" + "\'"
                                                  }
 
                                          )
     # N4:
-    nodes_2_n4_a20 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_a20 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "a.20" + "\'"
                                               }
                                       )
-    nodes_2_n4_b40 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_b40 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.40" + "\'"
                                               }
                                       )
-    nodes_2_n4_b60 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_b60 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.60" + "\'"
                                               }
                                       )
-    nodes_2_n4_c80 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_c80 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "c.80" + "\'"
                                               }
                                       )
 
-    nodes_2_n4_b1_100 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_b1_100 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                      "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b1.100" + "\'"
                                                  }
@@ -134,54 +135,54 @@ def experiment_3():
 def experiment_4():
     # XP 4:
     # N6
-    nodes_2_n6p_a20 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_a20 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "a.20" + "\'"
                                                }
                                        )
-    nodes_2_n6p_b40 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_b40 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.40" + "\'"
                                                }
                                        )
-    nodes_2_n6p_b60 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_b60 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.60" + "\'"
                                                }
                                        )
-    nodes_2_n6p_c80 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_c80 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                    "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "c.80" + "\'"
                                                }
                                        )
-    nodes_2_n6p_b1100 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n6p_b1100 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                      "\'" + DeviceInfo.DEVICE_NEXUS_6P + "\'",
                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b1.100" + "\'"
                                                  }
 
                                          )
     # N4:
-    nodes_2_n4_a20 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_a20 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "a.20" + "\'"
                                               }
                                       )
-    nodes_2_n4_b40 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_b40 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.40" + "\'"
                                               }
                                       )
-    nodes_2_n4_b60 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_b60 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b.60" + "\'"
                                               }
                                       )
-    nodes_2_n4_c80 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_c80 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                   "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                               DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "c.80" + "\'"
                                               }
                                       )
-    nodes_2_n4_b1_100 = load_experiments(100, **{DatabaseManager.CL_RESPDROID_DEVICE:
+    nodes_2_n4_b1_100 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
                                                      "\'" + DeviceInfo.DEVICE_NEXUS_4 + "\'",
                                                  DatabaseManager.CL_RESPDROID_IMG_BASE: "\'" + "b1.100" + "\'"
                                                  }
@@ -199,4 +200,4 @@ def experiment_4():
             ]
     # only averages count
     nodes = [n4s, n6ps]
-    # ChartDraw.x4_createChart(nodes, "Responsiveness", "image name and megapixels", "decode time (ms)")
+    ChartDraw.x4_createChart(nodes, "Responsiveness", "image name and megapixels", "decode time (ms)")
