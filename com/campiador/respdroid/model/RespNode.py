@@ -7,7 +7,13 @@ import simplejson as simplejson
 # TODO: add parameter megapixels
 class RespNode:
     def __init__(self, node_id, experiment_id, timestamp, device, delay, operation, imgbase, imgperc, imgsizeKB,
-                 img_width, img_height, os_version_release_name, package_name, app_name, app_version_code,
+                 img_width, img_height,
+                 app_name,
+                 package_name,
+                 app_version_code,
+                 os_version_release_name,
+
+
                  activity_name):
         self.activity_name = activity_name
         self.app_version_code = app_version_code

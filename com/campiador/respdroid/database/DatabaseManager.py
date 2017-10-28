@@ -29,7 +29,11 @@ CL_RESPDROID_IMG_PERC = "imgperc"
 CL_RESPDROID_IMG_SIZE_KB = "imgsizekb"
 CL_RESPDROID_IMG_WIDTH = "imgwidth"
 CL_RESPDROID_IMG_HEIGHT = "imgheight"
-
+CL_RESPDROID_APP_NAME = "app_name"
+CL_RESPDROID_PACKAGE_NAME = "package_name"
+CL_RESPDROID_APP_VERSION_CODE = "app_version_code"
+CL_RESPDROID_OS_VERSION_RELEASE_NAME = "os_version_release_name"
+CL_RESPDROID_ACTIVITY_NAME = "activity_name"
 
 def create_database_if_not_exists():
     global c, conn
@@ -40,12 +44,19 @@ def create_database_if_not_exists():
         print "table does not exist"
         c.execute('''CREATE TABLE respnodes ({id} integer primary key, {xid} integer, {isdummy} integer, {date} text, 
                  {device} text, {time} text, {operation} text, {imgbase} text, {imgperc} integer, {imgsizekb} integer,
-                 {imgwidth} integer, {imgheight} integer)'''
+                 {imgwidth} integer, {imgheight} integer, {app_name} text, {package_name} text, 
+                 {app_version_code} integer, {os_version_release_name} text, {activity_name} text)'''
                   .format(id=CL_RESPDROID_NID, xid=CL_RESPDROID_XID, isdummy = CL_RESPDROID_IS_DUMMY,
                           date=CL_RESPDROID_DATETIME, device=CL_RESPDROID_DEVICE, time=CL_RESPDROID_DELAY,
-                          operation=CL_RESPDROID_OPERATION, imgbase=CL_RESPDROID_IMG_BASE, imgperc=CL_RESPDROID_IMG_PERC,
+                          operation=CL_RESPDROID_OPERATION,
+                          imgbase=CL_RESPDROID_IMG_BASE, imgperc=CL_RESPDROID_IMG_PERC,
                           imgsizekb=CL_RESPDROID_IMG_SIZE_KB,
-                          imgwidth=CL_RESPDROID_IMG_WIDTH, imgheight=CL_RESPDROID_IMG_HEIGHT))
+                          imgwidth=CL_RESPDROID_IMG_WIDTH, imgheight=CL_RESPDROID_IMG_HEIGHT,
+                          app_name=CL_RESPDROID_APP_NAME,
+                          package_name=CL_RESPDROID_PACKAGE_NAME,
+                          app_version_code=CL_RESPDROID_APP_VERSION_CODE,
+                          os_version_release_name=CL_RESPDROID_OS_VERSION_RELEASE_NAME,
+                          activity_name=CL_RESPDROID_ACTIVITY_NAME))
 
     # Save (commit) the changes
     conn.commit()
@@ -74,8 +85,16 @@ def insert_query(data):
     global c, conn
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
-    # NOTE: using a NULL to have SQLite insert an auto-generated id
-    c.executemany('INSERT INTO respnodes VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?)', data)
+    # NOTE: using a NULL to have SQLite insert an auto-generated primary key id
+    c.executemany('INSERT INTO respnodes VALUES (NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', data)
+    # TODO: NEED TO ADD:
+
+    # + ", appname:" + self.app_name \
+    # + ", package_name:" + self.package_name \
+    # + ", app_version_code:" + str(self.app_version_code) \
+    # + ", os_version_release_name:" + self.os_version_release_name \
+    # + ", activity_name:" + self.activity_name
+
     conn.commit()
     conn.close()
 
@@ -104,10 +123,21 @@ def map_objects_to_relational(respnodes):
     query_data= []
     for respnode in respnodes:
         # TODO: timestamp should be handled in a higher level
+        # NEED TO ADD:
+
+        # + ", appname:" + self.app_name \
+        # + ", package_name:" + self.package_name \
+        # + ", app_version_code:" + str(self.app_version_code) \
+        # + ", os_version_release_name:" + self.os_version_release_name \
+        # + ", activity_name:" + self.activity_name
+
         query_data.append((respnode.getExperimentId(), USE_DUMMY_DATA, respnode.get_timestamp(),
                            respnode.getDevice(), respnode.getTimeDuration(), respnode.getOperation(),
                            respnode.getBaseParam(), respnode.getScaleParam(),
-                           respnode.getImgSize(), respnode.get_img_width(), respnode.get_img_height()))
+                           respnode.getImgSize(), respnode.get_img_width(), respnode.get_img_height(),
+                           respnode.app_name, respnode.package_name, respnode.app_version_code,
+                           respnode.os_version_release_name, respnode.activity_name)
+                          )
     return query_data
 
 
@@ -127,7 +157,11 @@ def clear_database_if_exists():
 
 
 def load_experiments(limit, *experiments_tuple, **other_conditions):
-    """ :param experiment_tuple: the experiment id(s) should be a tuple. So e.g. for loading experiment 102, use (102,).
+
+    """
+        :param limit: max number of results. 0 for no limit.
+
+        :param experiment_tuple: the experiment id(s) should be a tuple. So e.g. for loading experiment 102, use (102,).
 
         :param other_conditions: User can provide any number of conditions through a **dictionary.\
         For 0 conditions, don't provide any dict."""
@@ -153,7 +187,6 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
             else:
                 condition = condition + " OR " + CL_RESPDROID_XID + " = " + "?"
         condition = condition + " )"
-
 
     if len(other_conditions) > 0:
         for k, v in other_conditions.iteritems():
@@ -183,14 +216,26 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
 
     object_node_list = []
 
+
     # EXTRA: extract a function and use a one-line map() instead of the loop
+    # relational to python model
+
+    # TODO: NEED TO ADD:
+    # + ", appname:" + self.app_name \
+    # + ", package_name:" + self.package_name \
+    # + ", app_version_code:" + str(self.app_version_code) \
+    # + ", os_version_release_name:" + self.os_version_release_name \
+    # + ", activity_name:" + self.activity_name
+
     for experiment in data:
         object_node = RespNode(experiment[CL_RESPDROID_NID], experiment[CL_RESPDROID_XID],
                                experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_DEVICE],
                                experiment[CL_RESPDROID_DELAY], experiment[CL_RESPDROID_OPERATION],
                                experiment[CL_RESPDROID_IMG_BASE], experiment[CL_RESPDROID_IMG_PERC],
                                experiment[CL_RESPDROID_IMG_SIZE_KB], experiment[CL_RESPDROID_IMG_WIDTH],
-                               experiment[CL_RESPDROID_IMG_HEIGHT]
+                               experiment[CL_RESPDROID_IMG_HEIGHT], experiment[CL_RESPDROID_APP_NAME],
+                               experiment[CL_RESPDROID_PACKAGE_NAME], experiment[CL_RESPDROID_APP_VERSION_CODE],
+                               experiment[CL_RESPDROID_OS_VERSION_RELEASE_NAME], experiment[CL_RESPDROID_ACTIVITY_NAME]
                                )
         object_node_list.append(object_node)
 

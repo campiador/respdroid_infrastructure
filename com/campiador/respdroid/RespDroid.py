@@ -54,20 +54,27 @@ class RespDroid:
         print ("in runRespDroid")
         self.check_device_connections()
 
-        # current_experiment_number = atomic_get_new_experiment_number()
-        current_experiment_number = 0
+        current_experiment_number = atomic_get_new_experiment_number()
+        # current_experiment_number = 0
 
+        # TODO: result lists should be Plotable
+        result_lists = self.run_app_record_logcat_and_return_respnode_list(n_iterations, current_experiment_number)
 
-        result_lists = self.run_app_record_logcat_and_return_respnode_list(n_iterations,
-                                                                          current_experiment_number)
-        #
-        # self.store_data(resultLists)
-
-        print "APP RUN FINISHED"
         for result_list in result_lists:
             print result_list
 
-        ChartDraw.x4_createChart(result_lists, "Responsiveness", "image name and megapixels", "decode time (ms)")
+        # save results in database?
+        self.store_data(result_lists)
+
+        print "APP RUN FINISHED"
+
+
+        loaded_result_list = load_experiments(0, current_experiment_number)
+
+        print "result_lists:", result_lists
+        print "loaded_result_list:", loaded_result_list
+
+        ChartDraw.x4_createChart([loaded_result_list], "Responsiveness", "image name and megapixels", "decode time (ms)")
 
         # print_database()
         #
