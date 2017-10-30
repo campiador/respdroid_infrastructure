@@ -17,6 +17,8 @@ def deserialize_json_to_respnode(s):
 
 # TODO: more polymorphic code: deserialize without reading the dictionary key stings
 def deserialize_dict_to_respnode(dct):
+    print "deserializing dct: " , dct
+
     return RespNode(dct['node_id'], dct['experiment_id'], dct['timestamp'], dct['device'], dct['delay'],
                     dct['operation'], dct['img_base'], dct['img_perc'], dct['img_sizeKB'], dct['imgWidth'],
                     dct['imgHeight'], dct['app_name'], dct['package_name'],

@@ -9,6 +9,7 @@ from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.graphics.ChartDraw import create_box_chart_x1
 from com.campiador.respdroid.model import Operations
 from com.campiador.respdroid.model.RespNode import RespNode, respnodes_to_json
+from com.campiador.respdroid.model.map import DataPreparation
 from com.campiador.respdroid.model.map.DataPreparation import get_dummy_data, \
     deserializeStringsToRespnodes
 from com.campiador.respdroid.storage import PersistentData
@@ -59,22 +60,23 @@ class RespDroid:
 
         # TODO: result lists should be Plotable
         result_lists = self.run_app_record_logcat_and_return_respnode_list(n_iterations, current_experiment_number)
+        print "APP RUN FINISHED"
 
-        for result_list in result_lists:
-            print result_list
+        for i, result_list in enumerate(result_lists):
+            print "result list: ", i
+            for result in result_list:
+                print result
 
         # save results in database?
         self.store_data(result_lists)
 
-        print "APP RUN FINISHED"
-
-
         loaded_result_list = load_experiments(0, current_experiment_number)
+        device_sublists = DataPreparation.partition_nodelist_by_device_type_return_sublists(loaded_result_list)
 
-        print "result_lists:", result_lists
+        # print "result_lists:", result_lists
         print "loaded_result_list:", loaded_result_list
 
-        ChartDraw.x4_createChart([loaded_result_list], "Responsiveness", "image name and megapixels", "decode time (ms)")
+        ChartDraw.x4_createChart(device_sublists, "Responsiveness", "image name and megapixels", "decode time (ms)")
 
         # print_database()
         #

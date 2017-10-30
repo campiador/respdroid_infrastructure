@@ -198,7 +198,7 @@ def x4_createChart(resLists, chart_title, x_label, y_label):
         col = get_a_color(i)
         x_pos = np.arange(N_datapoints)
 
-        y = map(int, y_temp)
+        # y = map(int, y_temp)
 
         # print "index is {} and color is {}".format(i, col)
         plt.bar(x_pos + width * float(i), y_temp, width, alpha=1, color=col)

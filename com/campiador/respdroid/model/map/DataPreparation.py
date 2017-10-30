@@ -122,3 +122,24 @@ def get_dummy_data(experiment_id):
     return resultLists
 
 
+def partition_nodelist_by_device_type_return_sublists(node_list):
+    # [[device_1_nodes], [device_2_nodes], ...]
+    sublists = []
+
+    seen_device_types = []
+
+    for respnode in node_list:
+        node_device_type = respnode.getDevice()
+        if node_device_type not in seen_device_types:
+            # First node with this device type
+            seen_device_types.append(node_device_type)
+            sublists.append([])
+
+        device_type_index = seen_device_types.index(node_device_type)
+        # find the sublist for device type and add the node to it
+        sublists[device_type_index].append(respnode)
+
+    return sublists
+
+
+
