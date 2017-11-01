@@ -6,17 +6,24 @@ from sys import platform
 from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.database.DatabaseManager import load_experiments
 from com.campiador.respdroid.graphics import ChartDraw
+from com.campiador.respdroid.model.map import DataPreparation
 from com.campiador.respdroid.model.map.DataPreparation import deserializeStringsToRespnodes
 from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.storage.PersistentData import atomic_get_new_experiment_number
 from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
+from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_DEVELOPER
 
-# In seconds
-LOG_DURATION = 10
-NUMBER_OF_ITERATIONS = 1
+# CONTROL VARIABLES
 
+# TODO: Eventually there should be no limit
+DEFAULT_EXPERIMENT_ID = 242
+LOG_DURATION = 4 # In seconds
+
+NUMBER_OF_ITERATIONS = 10
+RUN_ON_CLIENT = False
 RECORD_RESULTS = False
+DRAW_CHART = True
 
 # NOTE: it does not need to be a class
 class RespDroid:
@@ -56,28 +63,44 @@ class RespDroid:
         if RECORD_RESULTS:
             current_experiment_number = atomic_get_new_experiment_number()
         else:
-            current_experiment_number = 0
+            current_experiment_number = DEFAULT_EXPERIMENT_ID
 
         # TODO: result lists should be Plotable
-        result_lists = self.run_app_record_logcat_and_return_respnode_list(n_iterations, current_experiment_number)
-        print "APP RUN FINISHED"
+        if RUN_ON_CLIENT:
+            result_lists_of_n_iterations = self.run_app_record_logcat_and_return_respnode_list(n_iterations, current_experiment_number)
+            print "APP RUN FINISHED"
 
-        for i, result_list in enumerate(result_lists):
-            print "result list: ", i
-            for result in result_list:
-                print result
+        if LOG_VERBOSE:
+            for i, result_list in enumerate(result_lists_of_n_iterations):
+                print "result list: ", i
+                for result in result_list:
+                    print result
 
         # save results in database?
         if RECORD_RESULTS:
-            self.store_data(result_lists)
+            self.store_data(result_lists_of_n_iterations)
 
-        # loaded_result_list = load_experiments(0, current_experiment_number)
-        # device_sublists = DataPreparation.partition_nodelist_by_device_type_return_sublists(loaded_result_list)
+        # Load the same results from database
+            # [ img1_i1d1, ,img1i1d2, ...,] nodes with mixed device, iteration, image values
+        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number)
+
+        # [ #d1 [img1_i1, ,img1i2, , ...]
+        #  #d2 [img1_i1, ,img1i2], ...] list of nodes, indexed by device type
+        device_sublists = DataPreparation.partition_nodelist_by_device_type_return_sublists(loaded_result_list)
+
+        # [#d1 [img1_mean_std, img2_mean_std, img3_mean_std, ...]
+        #  #d2 [img1_mean_std, img2_mean_std, img3_mean_std, ...], ...] same as above, but
+        # iterations of the same images have been reduced to 1 image
+        mean_std_device_sublists = []
+        for device_sublist in device_sublists:
+            print "\n device sublist:"
+            mean_std_device_sublist = DataPreparation.reduce_respnode_n_iterations_to_one_plotable(device_sublist)
+            mean_std_device_sublists.append(mean_std_device_sublist)
 
         # print "result_lists:", result_lists
         # print "loaded_result_list:", loaded_result_list
-
-        ChartDraw.x4_createChart(result_lists, "Responsiveness", "image name and megapixels", "decode time (ms)")
+        if DRAW_CHART:
+            ChartDraw.x4_createChart(mean_std_device_sublists, "Responsiveness", "image name and megapixels", "decode time (ms)")
 
         # print_database()
         #

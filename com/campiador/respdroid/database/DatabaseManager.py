@@ -6,6 +6,7 @@ import sqlite3
 from numpy import size
 
 from com.campiador.respdroid.model.RespNode import RespNode
+from com.campiador.respdroid.util import Log
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
 
@@ -13,6 +14,8 @@ from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 # SCHEMA: id, experiment id, is_dummy? (1=true:0=false), date(time of operation on mobile device),
 # device, time (delay-duration of operation), operation, imgbase, imgperc, imgsizeKB
 # TODO: think of a primary key
+from com.campiador.respdroid.util.Log import LOG_VERBOSE
+
 
 RESPDROID_DB = './database/respdroid.db'
 TB_RESPDROID = 'respnodes' # TODO: extract all hardcoded references to this string
@@ -34,6 +37,8 @@ CL_RESPDROID_PACKAGE_NAME = "package_name"
 CL_RESPDROID_APP_VERSION_CODE = "app_version_code"
 CL_RESPDROID_OS_VERSION_RELEASE_NAME = "os_version_release_name"
 CL_RESPDROID_ACTIVITY_NAME = "activity_name"
+
+QUERY_LIMIT = 0
 
 def create_database_if_not_exists():
     global c, conn
@@ -100,13 +105,14 @@ def insert_query(data):
 
 
 def print_database():
-    print "printintg database content"
+    if LOG_VERBOSE:
+        print "printintg database content"
     # this variable holds the true, we use the tuple to prevent sql injection attacks
     global c, conn
     conn = sqlite3.connect(RESPDROID_DB)
     c = conn.cursor()
 
-    t = (TB_RESPDROID, CL_RESPDROID_IS_DUMMY, USE_DUMMY_DATA,)
+    # t = (TB_RESPDROID, CL_RESPDROID_IS_DUMMY, USE_DUMMY_DATA,)
     c.execute('SELECT * FROM {} WHERE {}={}'.format(TB_RESPDROID, CL_RESPDROID_IS_DUMMY, USE_DUMMY_DATA))
     data = (c.fetchall())
 
@@ -166,9 +172,10 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
         :param other_conditions: User can provide any number of conditions through a **dictionary.\
         For 0 conditions, don't provide any dict."""
 
-    print "loading experiments"
-    print("loading {} experiments and found {} conditions in kwargs".format(len(experiments_tuple), len(other_conditions)))
-    print("experiment tuple: {}".format(experiments_tuple))
+    if LOG_VERBOSE:
+        print "loading experiments"
+        print("loading {} experiments and found {} conditions in kwargs".format(len(experiments_tuple), len(other_conditions)))
+        print("experiment tuple: {}".format(experiments_tuple))
     condition = ""
 
     if len(experiments_tuple) > 0: # and experiments_tuple != (0,):
@@ -199,7 +206,8 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
     if limit != 0:
         condition += " LIMIT {}".format(limit)
 
-    print condition
+    if LOG_VERBOSE:
+        print condition
 
     global conn, c
     conn = sqlite3.connect(RESPDROID_DB)
@@ -209,7 +217,8 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
     c = conn.cursor()
 
     query = "SELECT * FROM " + TB_RESPDROID + condition
-    print query
+    if LOG_VERBOSE:
+        print query
     c.execute(query, experiments_tuple)
 
     data = (c.fetchall())
@@ -238,14 +247,15 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
                                experiment[CL_RESPDROID_OS_VERSION_RELEASE_NAME], experiment[CL_RESPDROID_ACTIVITY_NAME]
                                )
         object_node_list.append(object_node)
-
-        print object_node
+        if LOG_VERBOSE:
+            print object_node
 
     return object_node_list
 
 
 def load_objects():
-    print "loading objects"
+    if LOG_VERBOSE:
+        print "loading objects"
     # this variable holds the true, we use the tuple to prevent sql injection attacks
     global c, conn
     conn = sqlite3.connect(RESPDROID_DB)
@@ -255,5 +265,6 @@ def load_objects():
     c.execute('SELECT * FROM respnodes WHERE ?=?', t)
     data = (c.fetchall())
 
-    for item in data:
-        print item
+    if Log.LOG_VERBOSE:
+        for item in data:
+            print item
