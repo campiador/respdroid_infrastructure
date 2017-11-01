@@ -4,21 +4,19 @@ import itertools
 from sys import platform
 
 from com.campiador.respdroid.database import DatabaseManager
-from com.campiador.respdroid.database.DatabaseManager import load_experiments, print_database
+from com.campiador.respdroid.database.DatabaseManager import load_experiments
 from com.campiador.respdroid.graphics import ChartDraw
-from com.campiador.respdroid.graphics.ChartDraw import create_box_chart_x1
-from com.campiador.respdroid.model import Operations
-from com.campiador.respdroid.model.RespNode import RespNode, respnodes_to_json
-from com.campiador.respdroid.model.map import DataPreparation
-from com.campiador.respdroid.model.map.DataPreparation import get_dummy_data, \
-    deserializeStringsToRespnodes
+from com.campiador.respdroid.model.map.DataPreparation import deserializeStringsToRespnodes
 from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.storage.PersistentData import atomic_get_new_experiment_number
-from com.campiador.respdroid.util import DeviceInfo, time_and_date
+from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 
-LOG_DURATION = 4
+# In seconds
+LOG_DURATION = 10
 NUMBER_OF_ITERATIONS = 1
+
+RECORD_RESULTS = False
 
 # NOTE: it does not need to be a class
 class RespDroid:
@@ -55,8 +53,10 @@ class RespDroid:
         print ("in runRespDroid")
         self.check_device_connections()
 
-        current_experiment_number = atomic_get_new_experiment_number()
-        # current_experiment_number = 0
+        if RECORD_RESULTS:
+            current_experiment_number = atomic_get_new_experiment_number()
+        else:
+            current_experiment_number = 0
 
         # TODO: result lists should be Plotable
         result_lists = self.run_app_record_logcat_and_return_respnode_list(n_iterations, current_experiment_number)
@@ -68,15 +68,16 @@ class RespDroid:
                 print result
 
         # save results in database?
-        self.store_data(result_lists)
+        if RECORD_RESULTS:
+            self.store_data(result_lists)
 
-        loaded_result_list = load_experiments(0, current_experiment_number)
-        device_sublists = DataPreparation.partition_nodelist_by_device_type_return_sublists(loaded_result_list)
+        # loaded_result_list = load_experiments(0, current_experiment_number)
+        # device_sublists = DataPreparation.partition_nodelist_by_device_type_return_sublists(loaded_result_list)
 
         # print "result_lists:", result_lists
-        print "loaded_result_list:", loaded_result_list
+        # print "loaded_result_list:", loaded_result_list
 
-        ChartDraw.x4_createChart(device_sublists, "Responsiveness", "image name and megapixels", "decode time (ms)")
+        ChartDraw.x4_createChart(result_lists, "Responsiveness", "image name and megapixels", "decode time (ms)")
 
         # print_database()
         #
