@@ -1,5 +1,7 @@
 # A respnode object corresponds to one line of logcat which in turn represents one operation.
 # TODO: all nodes should inherit from an abstract base node, called UX node
+# point of truth: it is self.std_error
+
 import json
 
 import simplejson as simplejson

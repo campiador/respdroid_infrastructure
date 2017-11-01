@@ -40,7 +40,7 @@ def createChart(resLists, chart_title, x_label, y_label):
 
         N_datapoints = len(x_temp)
 
-        device_type = resList[0].getDevice()
+        device_type = resList[i].getDevice()
 
         width = 1 / float(N_datapoints + 1)
 
@@ -176,7 +176,7 @@ def x2_createChart(resLists, chart_title, x_label, y_label):
 
 
 # createChart([], "chart title", "x axis label", "y_axis_label")
-def x4_createChart(resLists, chart_title, x_label, y_label):
+def plot_with_error_bars(resLists, chart_title, x_label, y_label):
     for list in resLists:
         if not list:
             "Error: trying to draw empty list"
@@ -186,10 +186,10 @@ def x4_createChart(resLists, chart_title, x_label, y_label):
     # CONTINUE HERE: FIXME: why TypeError: iteration over non-sequence? prepare for boxplot. write a create box plot
     # TODO: check to make sure all x value lists are identical
     for i, resList in enumerate(resLists):
-        x_temp = DataPreparation.imgs_title_and_mp(resList)
-        y_temp = DataPreparation.imgListValues(resList)
-
-        N_datapoints = len(x_temp)
+        x_sub = DataPreparation.imgs_title_and_mp(resList)
+        y_sub = DataPreparation.imgListValues(resList)
+        y_error = [respnode.std_error for respnode in resList]
+        N_datapoints = len(x_sub)
 
         device_type = resList[0].getDevice()
 
@@ -201,12 +201,14 @@ def x4_createChart(resLists, chart_title, x_label, y_label):
         # y = map(int, y_temp)
 
         # print "index is {} and color is {}".format(i, col)
-        plt.bar(x_pos + width * float(i), y_temp, width, alpha=1, color=col)
+        # plt.bar(x_pos + width * float(i), y_sub, width, alpha=1, color=col)
+        # plt.errorbar(x_pos + width * float(i), y_sub, yerr=y_error, color='b', label=l2, capsize=CAPSIZE)
+        plt.errorbar(x_pos, y_sub, color=col, yerr=y_error, capsize=5)
 
         patch = mpatches.Patch(color=col, label=device_type)
         legend_patches.append(patch)
 
-    plt.xticks(x_pos, x_temp)
+    plt.xticks(x_pos, x_sub)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(chart_title)

@@ -21,8 +21,8 @@ DEFAULT_EXPERIMENT_ID = 242
 LOG_DURATION = 4 # In seconds
 
 NUMBER_OF_ITERATIONS = 10
-RUN_ON_CLIENT = False
-RECORD_RESULTS = False
+RUN_ON_CLIENT = True
+RECORD_RESULTS = True
 DRAW_CHART = True
 
 # NOTE: it does not need to be a class
@@ -100,7 +100,7 @@ class RespDroid:
         # print "result_lists:", result_lists
         # print "loaded_result_list:", loaded_result_list
         if DRAW_CHART:
-            ChartDraw.x4_createChart(mean_std_device_sublists, "Responsiveness", "image name and megapixels", "decode time (ms)")
+            ChartDraw.plot_with_error_bars(mean_std_device_sublists, "Responsiveness", "image name and megapixels", "decode time (ms)")
 
         # print_database()
         #
@@ -203,6 +203,7 @@ class RespDroid:
         adb_command_compile = " /path/to/gradlewrapperinproject/ + gradlew assembleDebug"
         # In a default project setup, the resulting apk can then be found in app/build/outputs/apk/app-debug.apk
 
+    # TODO: install the compiled app
     def adbInstall(self, device, app_path):
         ADB_COMMAND_INSTALL = "adb -s " + device + " install" + app_path
 
