@@ -20,16 +20,18 @@ from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_DEVELOPER
 DEFAULT_EXPERIMENT_ID = 242
 LOG_DURATION = 4 # In seconds
 
-NUMBER_OF_ITERATIONS = 10
+NUMBER_OF_ITERATIONS = 3
 RUN_ON_CLIENT = True
 RECORD_RESULTS = True
 DRAW_CHART = True
 
+APP_UNDER_TEST_PACKAGE = "com.campiador.respdroid"
+TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
+
 # NOTE: it does not need to be a class
 class RespDroid:
     def __init__(self):
-        self.APP_PACKAGE = "com.campiador.respdroid"
-        self.TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
+
         self.devices = DeviceInfo.getDeviceList()
 
     def check_device_connections(self):
@@ -97,8 +99,11 @@ class RespDroid:
             mean_std_device_sublist = DataPreparation.reduce_respnode_n_iterations_to_one_plotable(device_sublist)
             mean_std_device_sublists.append(mean_std_device_sublist)
 
+        mean_std_device_sublists = DataPreparation.sort_nodelists_by_megapixels(mean_std_device_sublists)
         # print "result_lists:", result_lists
         # print "loaded_result_list:", loaded_result_list
+
+
         if DRAW_CHART:
             ChartDraw.plot_with_error_bars(mean_std_device_sublists, "Responsiveness", "image name and megapixels", "decode time (ms)")
 
@@ -184,9 +189,9 @@ class RespDroid:
             for device in self.devices:
                 # TODO: adbInstall in the future, I will install apps, path to which will be provided through args
                 self.adbClearLogcat(device)
-                self.adbStopApp(device, self.APP_PACKAGE)
-                self.adbRunApp(device, self.APP_PACKAGE)
-                resultString = self.adbRecordLogcat(device, self.TAG_RESPDROID_DYNAMIC)
+                self.adbStopApp(device, APP_UNDER_TEST_PACKAGE)
+                self.adbRunApp(device, APP_UNDER_TEST_PACKAGE)
+                resultString = self.adbRecordLogcat(device, TAG_RESPDROID_DYNAMIC)
                 resultList = deserializeStringsToRespnodes(resultString, current_experiment_id)
                 respnode_lists.append(resultList)
 

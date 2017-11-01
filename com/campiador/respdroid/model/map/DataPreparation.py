@@ -199,3 +199,9 @@ def reduce_respnode_n_iterations_to_one_plotable(one_device_sublist):
     return unique_image_nodes
 
 
+def sort_nodelists_by_megapixels(mean_std_device_sublists):
+
+    for nodelist in mean_std_device_sublists:
+        nodelist.sort(key=lambda node: node.img_MPs, reverse=False)
+
+    return mean_std_device_sublists

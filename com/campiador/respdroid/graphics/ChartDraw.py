@@ -172,8 +172,6 @@ def x2_createChart(resLists, chart_title, x_label, y_label):
     #plt.savefig('./{}'.format(date.ctime())
 
 
-    ""
-
 
 # createChart([], "chart title", "x axis label", "y_axis_label")
 def plot_with_error_bars(resLists, chart_title, x_label, y_label):
