@@ -7,26 +7,27 @@ from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.database.DatabaseManager import load_experiments
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.model.map import DataPreparation
-from com.campiador.respdroid.model.map.DataPreparation import deserializeStringsToRespnodes
+from com.campiador.respdroid.model.map.DataPreparation import deserializeLogcatToRespnodes
 from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.storage.PersistentData import atomic_get_new_experiment_number
 from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
-from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_DEVELOPER
+from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_DEVELOPER, LOG_CLIENT
+
+TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
 
 # CONTROL VARIABLES
+# TODO: Eventually there should be no timeout per simulation
+LOG_DURATION = 1200 # In seconds
+DEFAULT_EXPERIMENT_ID = 254
 
-# TODO: Eventually there should be no limit
-DEFAULT_EXPERIMENT_ID = 242
-LOG_DURATION = 4 # In seconds
-
-NUMBER_OF_ITERATIONS = 3
+NUMBER_OF_ITERATIONS = 10
 RUN_ON_CLIENT = True
 RECORD_RESULTS = True
 DRAW_CHART = True
 
 APP_UNDER_TEST_PACKAGE = "com.campiador.respdroid"
-TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
+
 
 # NOTE: it does not need to be a class
 class RespDroid:
@@ -96,7 +97,7 @@ class RespDroid:
         mean_std_device_sublists = []
         for device_sublist in device_sublists:
             print "\n device sublist:"
-            mean_std_device_sublist = DataPreparation.reduce_respnode_n_iterations_to_one_plotable(device_sublist)
+            mean_std_device_sublist = DataPreparation.reduce_respnode_n_iterations_to_plotables(device_sublist)
             mean_std_device_sublists.append(mean_std_device_sublist)
 
         mean_std_device_sublists = DataPreparation.sort_nodelists_by_megapixels(mean_std_device_sublists)
@@ -105,7 +106,9 @@ class RespDroid:
 
 
         if DRAW_CHART:
-            ChartDraw.plot_with_error_bars(mean_std_device_sublists, "Responsiveness", "image name and megapixels", "decode time (ms)")
+            ChartDraw.plot_with_error_bars(mean_std_device_sublists,
+                                           "Responsiveness", "image name and megapixels", "decode time (ms)")
+                                           # "Responsiveness", "image name and kilobytes", "decode time (ms)")
 
         # print_database()
         #
@@ -182,17 +185,20 @@ class RespDroid:
     def run_app_record_logcat_and_return_respnode_list(self, n_iterations, current_experiment_id):
         respnode_lists = []
 
+        if LOG_CLIENT:
+            print "experiment id: ", current_experiment_id
         iteration = 0
         for _ in itertools.repeat(None, n_iterations):
             iteration += 1
-            print("ITERATION: {}".format(iteration))
+            if LOG_CLIENT:
+                print("\nITERATION: {}".format(iteration))
             for device in self.devices:
                 # TODO: adbInstall in the future, I will install apps, path to which will be provided through args
                 self.adbClearLogcat(device)
                 self.adbStopApp(device, APP_UNDER_TEST_PACKAGE)
                 self.adbRunApp(device, APP_UNDER_TEST_PACKAGE)
                 resultString = self.adbRecordLogcat(device, TAG_RESPDROID_DYNAMIC)
-                resultList = deserializeStringsToRespnodes(resultString, current_experiment_id)
+                resultList = deserializeLogcatToRespnodes(resultString, current_experiment_id)
                 respnode_lists.append(resultList)
 
         return respnode_lists

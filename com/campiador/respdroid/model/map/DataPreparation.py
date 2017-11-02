@@ -12,29 +12,11 @@ from com.campiador.respdroid.util.Log import LOG_DEVELOPER, LOG_VERBOSE
 from com.campiador.respdroid.util.json_helper import is_valid_json
 
 
-def deserializeStringsToRespnodes(logcat_lines_including_serialized_respnodes, experiment_id):
+def deserializeLogcatToRespnodes(logcat_lines_including_serialized_respnodes, experiment_id):
     if LOG_VERBOSE:
         print("deserialize started")
     respNodes = []
     for line in logcat_lines_including_serialized_respnodes.splitlines():
-        # print("\n")
-        # line_elems = line.split("--")
-        # # print("parsing line: " + str(line_elems))
-        # # FIXME: a more robost method for detecting respdroid lines needed
-        # if ("waiting" in line_elems[0] or "beginning" in line_elems[4]):
-        #     # element not a log
-        #     continue
-        # else:
-        #     # FIXME: this is bug-prone, find a way to avoid magic numbers
-        #     # for index, elem in enumerate(line_elems):
-        #     #     print "line {}:{}".format(index, elem)
-        #     # exit(0)
-        #
-        #     # respNode = RespNode(0, experiment_id, line_elems[10], line_elems[6], line_elems[2],
-        #     #                     Operations.DECODE, line_elems[4], line_elems[5],
-        #     #                     line_elems[7], line_elems[8], line_elems[9])
-        #     # respNodes.append(respNode)
-
         if "{" in line: #probably json
             # print "line is probably valid json"
             # print line
@@ -75,14 +57,14 @@ def imgListTitles(imgList):
 def imgListTitlesAndSizes(imgList):
     titles = []
     for node in imgList:
-        titles.append("{} ({})".format(node.getImageName(), node.getImgSize()))
+        titles.append("{}\n({})".format(node.getImageName()[4:8], "{0:.2f}".format(node.getImgSize())))
     return titles
 
 
 def imgs_title_and_mp(imgs):
     titles_mps = []
     for node in imgs:
-        titles_mps.append("{}({})".format(node.getImageName(), node.get_img_megapixels()))
+        titles_mps.append("{}\n({})".format(node.getImageName()[4:8], "{0:.2f}".format(node.get_img_megapixels())))
     return titles_mps
 
 
@@ -168,7 +150,7 @@ def partition_nodelist_by_image_name_return_sublists(node_list):
     return sublists
 
 
-def reduce_respnode_n_iterations_to_one_plotable(one_device_sublist):
+def reduce_respnode_n_iterations_to_plotables(one_device_sublist):
 
     if LOG_VERBOSE:
         print "onedevicesublist:", one_device_sublist

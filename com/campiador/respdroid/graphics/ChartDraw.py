@@ -184,12 +184,16 @@ def plot_with_error_bars(resLists, chart_title, x_label, y_label):
     # CONTINUE HERE: FIXME: why TypeError: iteration over non-sequence? prepare for boxplot. write a create box plot
     # TODO: check to make sure all x value lists are identical
     for i, resList in enumerate(resLists):
-        x_sub = DataPreparation.imgs_title_and_mp(resList)
+
+        if "megapixels" in x_label:
+            x_sub = DataPreparation.imgs_title_and_mp(resList)
+        else: # kilobytes
+            x_sub = DataPreparation.imgListTitlesAndSizes(resList)
         y_sub = DataPreparation.imgListValues(resList)
         y_error = [respnode.std_error for respnode in resList]
         N_datapoints = len(x_sub)
 
-        device_type = resList[0].getDevice()
+        device_type = resList[0].getDevice() # since all nodes have the same type, we simply select the first node
 
         width = 1 / float(N_datapoints + 1)
 
