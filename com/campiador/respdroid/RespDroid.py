@@ -19,11 +19,11 @@ TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
 # CONTROL VARIABLES
 # TODO: Eventually there should be no timeout per simulation
 LOG_DURATION = 1500 # In seconds
-DEFAULT_EXPERIMENT_ID = 262
+DEFAULT_EXPERIMENT_ID = (259, 269)
 
 NUMBER_OF_ITERATIONS = 10
-RUN_ON_CLIENT = True
-RECORD_RESULTS = True
+RUN_ON_CLIENT = False
+RECORD_RESULTS = False
 DRAW_CHART = True
 
 APP_UNDER_TEST_PACKAGE = "com.campiador.respdroid"
@@ -71,7 +71,7 @@ class RespDroid:
         # TODO: result lists should be Plotable
         if RUN_ON_CLIENT:
             result_lists_of_n_iterations = self.run_app_record_logcat_and_return_respnode_list(n_iterations,
-                                                                                               current_experiment_number)
+                                                                                               DEFAULT_EXPERIMENT_ID)
             print "APP RUN FINISHED"
 
         if LOG_VERBOSE:
@@ -86,7 +86,7 @@ class RespDroid:
 
         # Load the same results from database
             # [ img1_i1d1, ,img1i1d2, ...,] nodes with mixed device, iteration, image values
-        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number)
+        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, 259, 269)
         print "loaded results"
         print len(loaded_result_list)
         print loaded_result_list

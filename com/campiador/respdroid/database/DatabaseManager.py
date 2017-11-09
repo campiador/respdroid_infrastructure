@@ -14,8 +14,7 @@ from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 # SCHEMA: id, experiment id, is_dummy? (1=true:0=false), date(time of operation on mobile device),
 # device, time (delay-duration of operation), operation, imgbase, imgperc, imgsizeKB
 # TODO: think of a primary key
-from com.campiador.respdroid.util.Log import LOG_VERBOSE
-
+from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_CLIENT
 
 RESPDROID_DB = './database/respdroid.db'
 TB_RESPDROID = 'respnodes' # TODO: extract all hardcoded references to this string
@@ -217,7 +216,7 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
     c = conn.cursor()
 
     query = "SELECT * FROM " + TB_RESPDROID + condition
-    if LOG_VERBOSE:
+    if LOG_CLIENT:
         print query
     c.execute(query, experiments_tuple)
 

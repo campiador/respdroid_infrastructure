@@ -5,6 +5,8 @@ from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.util import DeviceInfo
 
 # experiment log
+# 257 = Nexus 4, 6P, 100, 1mb10mb
+# 259 = Nexus 4, 6P, 900, 1mb10mb
 # 269 = Nexus 5x, 900, 1mb10mb
 
 def experiment_1():
