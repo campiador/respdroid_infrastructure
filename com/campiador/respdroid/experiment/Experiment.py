@@ -4,6 +4,8 @@ from com.campiador.respdroid.database.DatabaseManager import load_experiments
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.util import DeviceInfo
 
+# experiment log
+# 269 = Nexus 5x, 900, 1mb10mb
 
 def experiment_1():
     pass

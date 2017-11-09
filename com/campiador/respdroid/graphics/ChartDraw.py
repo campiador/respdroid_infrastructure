@@ -195,7 +195,7 @@ def plot_with_error_bars(resLists, chart_title, x_label, y_label):
 
         device_type = resList[0].getDevice() # since all nodes have the same type, we simply select the first node
 
-        width = 1 / float(N_datapoints + 1)
+        # width = 1 / float(N_datapoints + 1)
 
         col = get_a_color(i)
         x_pos = np.arange(N_datapoints)

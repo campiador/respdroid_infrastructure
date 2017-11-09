@@ -12,14 +12,14 @@ from com.campiador.respdroid.storage import PersistentData
 from com.campiador.respdroid.storage.PersistentData import atomic_get_new_experiment_number
 from com.campiador.respdroid.util import DeviceInfo
 from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
-from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_DEVELOPER, LOG_CLIENT
+from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_CLIENT
 
 TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
 
 # CONTROL VARIABLES
 # TODO: Eventually there should be no timeout per simulation
-LOG_DURATION = 1200 # In seconds
-DEFAULT_EXPERIMENT_ID = 254
+LOG_DURATION = 1500 # In seconds
+DEFAULT_EXPERIMENT_ID = 262
 
 NUMBER_OF_ITERATIONS = 10
 RUN_ON_CLIENT = True
@@ -70,7 +70,8 @@ class RespDroid:
 
         # TODO: result lists should be Plotable
         if RUN_ON_CLIENT:
-            result_lists_of_n_iterations = self.run_app_record_logcat_and_return_respnode_list(n_iterations, current_experiment_number)
+            result_lists_of_n_iterations = self.run_app_record_logcat_and_return_respnode_list(n_iterations,
+                                                                                               current_experiment_number)
             print "APP RUN FINISHED"
 
         if LOG_VERBOSE:
@@ -86,6 +87,10 @@ class RespDroid:
         # Load the same results from database
             # [ img1_i1d1, ,img1i1d2, ...,] nodes with mixed device, iteration, image values
         loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number)
+        print "loaded results"
+        print len(loaded_result_list)
+        print loaded_result_list
+        # exit(0)
 
         # [ #d1 [img1_i1, ,img1i2, , ...]
         #  #d2 [img1_i1, ,img1i2], ...] list of nodes, indexed by device type
@@ -103,7 +108,6 @@ class RespDroid:
         mean_std_device_sublists = DataPreparation.sort_nodelists_by_megapixels(mean_std_device_sublists)
         # print "result_lists:", result_lists
         # print "loaded_result_list:", loaded_result_list
-
 
         if DRAW_CHART:
             ChartDraw.plot_with_error_bars(mean_std_device_sublists,
@@ -255,7 +259,7 @@ class RespDroid:
             commands.getstatusoutput(timeout_program_name + " " + str(LOG_DURATION) + "s " + ADB_COMMAND_LOGCAT)
         print("adb logcat command executed")
 
-        if (return_value == 0):
+        if return_value == 0:
             for line in adb_command_logcat_output.splitlines():
                 print line
             else:
