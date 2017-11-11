@@ -3,6 +3,8 @@ import commands
 import itertools
 from sys import platform
 
+import time
+
 from com.campiador.respdroid.database import DatabaseManager
 from com.campiador.respdroid.database.DatabaseManager import load_experiments
 from com.campiador.respdroid.graphics import ChartDraw
@@ -18,12 +20,12 @@ TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
 
 # CONTROL VARIABLES
 # TODO: Eventually there should be no timeout per simulation
-LOG_DURATION = 1500 # In seconds
+LOG_TIMEOUT_PER_ITERATION_PER_APP = 10  # In seconds
 DEFAULT_EXPERIMENT_ID = (259, 269)
 
-NUMBER_OF_ITERATIONS = 10
-RUN_ON_CLIENT = False
-RECORD_RESULTS = False
+NUMBER_OF_ITERATIONS = 1
+RUN_ON_CLIENT = True
+RECORD_RESULTS = True
 DRAW_CHART = True
 
 APP_UNDER_TEST_PACKAGE = "com.campiador.respdroid"
@@ -71,7 +73,7 @@ class RespDroid:
         # TODO: result lists should be Plotable
         if RUN_ON_CLIENT:
             result_lists_of_n_iterations = self.run_app_record_logcat_and_return_respnode_list(n_iterations,
-                                                                                               DEFAULT_EXPERIMENT_ID)
+                                                                                               current_experiment_number)
             print "APP RUN FINISHED"
 
         if LOG_VERBOSE:
@@ -84,9 +86,11 @@ class RespDroid:
         if RECORD_RESULTS:
             self.store_data(result_lists_of_n_iterations)
 
+
         # Load the same results from database
             # [ img1_i1d1, ,img1i1d2, ...,] nodes with mixed device, iteration, image values
-        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, 259, 269)
+        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number)
+
         print "loaded results"
         print len(loaded_result_list)
         print loaded_result_list
@@ -255,17 +259,40 @@ class RespDroid:
 
         timeout_program_name = self.getOsSpecificTimeout();
 
-        (return_value, adb_command_logcat_output) = \
-            commands.getstatusoutput(timeout_program_name + " " + str(LOG_DURATION) + "s " + ADB_COMMAND_LOGCAT)
+        # (return_value, adb_command_logcat_output) = \
+        #     commands.getstatusoutput(timeout_program_name + " " + str(LOG_TIMEOUT_PER_ITERATION_PER_APP) + "s "
+        #                              + ADB_COMMAND_LOGCAT)
+
+        final_timout_adb_command = timeout_program_name + " " + str(LOG_TIMEOUT_PER_ITERATION_PER_APP) + "s " \
+                                   + ADB_COMMAND_LOGCAT
+
+        final_timout_adb_command_array = final_timout_adb_command.split(" ")
+
+        import subprocess
+        start_time = time.time()
+
+        # TODO: use the timeout in popen, instead of using the 'timeout' command
+        p = subprocess.Popen(final_timout_adb_command_array, stdout=subprocess.PIPE)
+
+        print "popen time: {}".format(time.time()- start_time)
+        out, err = p.communicate()
+
+
+        print "popen + pcommunicate time: {}".format(time.time() - start_time)
+        # FIXME
+        return_value = 0
+
+
         print("adb logcat command executed")
+        #
+        # if return_value == 0:
+        #     for line in out.splitlines():
+        #         print line
+        #     else:
+        #         print ("command {} returned with value {}".format(ADB_COMMAND_LOGCAT, return_value))
 
-        if return_value == 0:
-            for line in adb_command_logcat_output.splitlines():
-                print line
-            else:
-                print ("command {} returned with value {}".format(ADB_COMMAND_LOGCAT, return_value))
 
-        return adb_command_logcat_output
+        return out
 
     #     TODO: process args, e.g. app path
     def parseArgs(self):
