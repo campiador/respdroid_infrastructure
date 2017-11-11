@@ -17,6 +17,7 @@ from com.campiador.respdroid.util.Config import USE_DUMMY_DATA
 from com.campiador.respdroid.util.Log import LOG_VERBOSE, LOG_CLIENT
 
 TAG_RESPDROID_DYNAMIC = "RESPDROID_DYNAMIC"
+RESPDROID_END_ITER = "end_iter"
 
 # CONTROL VARIABLES
 # TODO: Eventually there should be no timeout per simulation
@@ -274,12 +275,19 @@ class RespDroid:
         # TODO: use the timeout in popen, instead of using the 'timeout' command
         p = subprocess.Popen(final_timout_adb_command_array, stdout=subprocess.PIPE)
 
-        print "popen time: {}".format(time.time()- start_time)
-        out, err = p.communicate()
+        print "popen time: {}".format(time.time() - start_time)
 
+        out = ""
+        for line in iter(p.stdout.readline, b''):
+            # print(">>> " + line.rstrip())
+            if RESPDROID_END_ITER in line:
+                break
+            out += line
 
-        print "popen + pcommunicate time: {}".format(time.time() - start_time)
-        # FIXME
+        # out, err = p.communicate()
+
+        print "popen + stdout time: {}".format(time.time() - start_time)
+
         return_value = 0
 
 
