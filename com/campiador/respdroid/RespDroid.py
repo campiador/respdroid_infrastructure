@@ -21,10 +21,10 @@ RESPDROID_END_ITER = "end_iter"
 
 # CONTROL VARIABLES
 # TODO: Eventually there should be no timeout per simulation
-LOG_TIMEOUT_PER_ITERATION_PER_APP = 10  # In seconds
+LOG_TIMEOUT_PER_ITERATION_PER_APP = 1500  # In seconds
 DEFAULT_EXPERIMENT_ID = (259, 269)
 
-NUMBER_OF_ITERATIONS = 1
+NUMBER_OF_ITERATIONS = 10
 RUN_ON_CLIENT = True
 RECORD_RESULTS = True
 DRAW_CHART = True
@@ -86,7 +86,6 @@ class RespDroid:
         # save results in database?
         if RECORD_RESULTS:
             self.store_data(result_lists_of_n_iterations)
-
 
         # Load the same results from database
             # [ img1_i1d1, ,img1i1d2, ...,] nodes with mixed device, iteration, image values
