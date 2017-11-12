@@ -8,6 +8,8 @@ from com.campiador.respdroid.util import DeviceInfo
 # 257 = Nexus 4, 6P, 100, 1mb10mb
 # 259 = Nexus 4, 6P, 900, 1mb10mb
 # 269 = Nexus 5x, 900, 1mb10mb
+# 286 = i10_1000_300k_99K_5x.png
+
 
 def experiment_1():
     pass
