@@ -171,7 +171,7 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
         :param other_conditions: User can provide any number of conditions through a **dictionary.\
         For 0 conditions, don't provide any dict."""
 
-    if LOG_VERBOSE:
+    if LOG_CLIENT:
         print "loading experiments"
         print("loading {} experiments and found {} conditions in kwargs".format(len(experiments_tuple), len(other_conditions)))
         print("experiment tuple: {}".format(experiments_tuple))
@@ -205,8 +205,8 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
     if limit != 0:
         condition += " LIMIT {}".format(limit)
 
-    if LOG_VERBOSE:
-        print condition
+    if LOG_CLIENT:
+        print "condition:", condition
 
     global conn, c
     conn = sqlite3.connect(RESPDROID_DB)

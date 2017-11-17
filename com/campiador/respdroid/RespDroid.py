@@ -6,7 +6,7 @@ from sys import platform
 import time
 
 from com.campiador.respdroid.database import DatabaseManager
-from com.campiador.respdroid.database.DatabaseManager import load_experiments
+from com.campiador.respdroid.database.DatabaseManager import load_experiments, CL_RESPDROID_OPERATION
 from com.campiador.respdroid.graphics import ChartDraw
 from com.campiador.respdroid.model.map import DataPreparation
 from com.campiador.respdroid.model.map.DataPreparation import deserializeLogcatToRespnodes
@@ -21,12 +21,12 @@ RESPDROID_END_ITER = "end_iter"
 
 # CONTROL VARIABLES
 # TODO: Eventually there should be no timeout per simulation
-LOG_TIMEOUT_PER_ITERATION_PER_APP = 1500  # In seconds
-DEFAULT_EXPERIMENT_ID = (259, 269)
+LOG_TIMEOUT_PER_ITERATION_PER_APP = 150  # In seconds
+DEFAULT_EXPERIMENT_ID = 288
 
 NUMBER_OF_ITERATIONS = 10
-RUN_ON_CLIENT = True
-RECORD_RESULTS = True
+RUN_ON_CLIENT = False
+RECORD_RESULTS = False
 DRAW_CHART = True
 
 APP_UNDER_TEST_PACKAGE = "com.campiador.respdroid"
@@ -87,9 +87,11 @@ class RespDroid:
         if RECORD_RESULTS:
             self.store_data(result_lists_of_n_iterations)
 
+            CL_RESPDROID_OPERATION
         # Load the same results from database
             # [ img1_i1d1, ,img1i1d2, ...,] nodes with mixed device, iteration, image values
-        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number)
+        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number,
+                                              operation ='\'Image Display\'')
 
         print "loaded results"
         print len(loaded_result_list)
@@ -118,9 +120,6 @@ class RespDroid:
                                            "Responsiveness", "image name and megapixels", "decode time (ms)")
                                            # "Responsiveness", "image name and kilobytes", "decode time (ms)")
 
-        # print_database()
-        #
-        # exit(0)
 
     def load_results_for_experiment_4(self):
         nodes_2_n6p_a20 = load_experiments(20, **{DatabaseManager.CL_RESPDROID_DEVICE:
