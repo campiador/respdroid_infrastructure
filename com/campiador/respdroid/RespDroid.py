@@ -21,12 +21,12 @@ RESPDROID_END_ITER = "end_iter"
 
 # CONTROL VARIABLES
 # TODO: Eventually there should be no timeout per simulation
-LOG_TIMEOUT_PER_ITERATION_PER_APP = 150  # In seconds
+LOG_TIMEOUT_PER_ITERATION_PER_APP = 1500  # In seconds
 DEFAULT_EXPERIMENT_ID = 288
 
 NUMBER_OF_ITERATIONS = 10
-RUN_ON_CLIENT = False
-RECORD_RESULTS = False
+RUN_ON_CLIENT = True
+RECORD_RESULTS = True
 DRAW_CHART = True
 
 APP_UNDER_TEST_PACKAGE = "com.campiador.respdroid"
@@ -88,10 +88,10 @@ class RespDroid:
             self.store_data(result_lists_of_n_iterations)
 
             CL_RESPDROID_OPERATION
-        # Load the same results from database
+            # Load the same results from database
             # [ img1_i1d1, ,img1i1d2, ...,] nodes with mixed device, iteration, image values
-        loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number,
-                                              operation ='\'Image Display\'')
+            loaded_result_list = load_experiments(DatabaseManager.QUERY_LIMIT, current_experiment_number)
+                                                  # operation ='\'Image Display\'')
 
         print "loaded results"
         print len(loaded_result_list)

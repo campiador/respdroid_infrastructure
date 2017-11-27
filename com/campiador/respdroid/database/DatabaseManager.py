@@ -169,7 +169,10 @@ def load_experiments(limit, *experiments_tuple, **other_conditions):
         :param experiment_tuple: the experiment id(s) should be a tuple. So e.g. for loading experiment 102, use (102,).
 
         :param other_conditions: User can provide any number of conditions through a **dictionary.\
-        For 0 conditions, don't provide any dict."""
+        For 0 conditions, don't provide any dict.
+
+    Input param example: (DatabaseManager.QUERY_LIMIT, 100, operation =\\\'Image Display\\\')
+    """
 
     if LOG_CLIENT:
         print "loading experiments"
