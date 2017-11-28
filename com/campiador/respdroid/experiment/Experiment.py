@@ -11,6 +11,7 @@ from com.campiador.respdroid.util import DeviceInfo
 # 286 = i10_1000_300k_99K_5x.png
 # 288 = i10_1000_1mb10mb_6P5X_decode_display
 # 289 = i10_1000_1mb10mb_5X_os8 watchout the decode displays!
+# 290 = i10_1000_300k_000k_5X_os8 watchout the decode displays!
 
 
 def experiment_1():
