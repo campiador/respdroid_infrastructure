@@ -1,0 +1,10 @@
+#! /bin/bash
+# Path to weka
+WEKA_PATH=/Users/behnam/tufts/135/weka-3-8-1
+# add sqlite connector (manually copied to weka path) and weka to classpath
+CP="$CLASSPATH:$WEKA_PATH/sqlite-jdbc-3.21.0.jar:$WEKA_PATH/weka.jar"
+# use the connector of debian package libmysql-java
+# CP="$CLASSPATH:/usr/share/java/:$WEKA_PATH/weka.jar"
+echo "used CLASSPATH: $CP"
+# start Explorer
+java -cp $CP -Xmx500m weka.gui.explorer.Explorer
