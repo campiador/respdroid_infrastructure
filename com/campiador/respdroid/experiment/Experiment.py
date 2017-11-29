@@ -13,6 +13,12 @@ from com.campiador.respdroid.util import DeviceInfo
 # 289 = i10_1000_1mb10mb_5X_os8 watchout the decode displays!
 # 290 = i10_1000_300k_000k_5X_os8 watchout the decode displays!
 
+# Prediction Query for Nexus 5X:
+# select CAST(os_version_release_name AS INT) AS os,
+# CAST(imgwidth AS float) * CAST(imgheight AS float) / 1000000 AS megapixels, imgsizekb,
+# CAST(time AS INT) AS delay
+# from respnodes where experiment_id in (286, 287, 288, 290) AND operation = 'Image Decode' AND device = 'Nexus 5X'
+
 
 def experiment_1():
     pass
